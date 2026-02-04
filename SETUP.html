@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FishingGear Pro</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #1a5f7a 0%, #2980b9 100%);
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            margin: 0.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #e67e22;
+            transform: scale(1.05);
+        }
+        .info {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        .code {
+            background: rgba(0,0,0,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎣 FishingGear Pro</h1>
+        <p>Your Ultimate Destination for Premium Fishing Equipment</p>
+        
+        <div class="info">
+            <h2>Welcome to the Hybrid App!</h2>
+            <p>This project combines React frontend with PHP backend for a modern shopping experience.</p>
+        </div>
+
+        <div class="info">
+            <h3>Available Versions:</h3>
+            <p>
+                <strong>React App (Modern):</strong><br>
+                The React frontend is ready in the <code>react-app/</code> folder.
+            </p>
+            <div class="code">cd react-app && npm install && npm run dev</div>
+            <p style="margin-top: 1rem;">Or visit the original PHP app:</p>
+            <div class="code">Go to: /Frontend/home.php</div>
+        </div>
+
+        <div class="info">
+            <h3>Next Steps:</h3>
+            <ol style="text-align: left; display: inline-block;">
+                <li>Install Node.js and npm if you haven't already</li>
+                <li>Navigate to the react-app folder</li>
+                <li>Run: <code>npm install</code></li>
+                <li>Run: <code>npm run dev</code></li>
+                <li>Open http://localhost:5173 in your browser</li>
+            </ol>
+        </div>
+
+        <a href="/KvalDarbs/react-app/" class="btn btn-primary">Open React App</a>
+        <a href="/KvalDarbs/index.php" class="btn btn-primary">Open PHP App</a>
+    </div>
+</body>
+</html>
