@@ -3,7 +3,7 @@
 ## 🎯 To Run React App
 
 ```bash
-cd react-app
+cd Frontend
 npm install          # Only first time
 npm run dev          # Every time you want to develop
 ```
@@ -13,36 +13,32 @@ Then open: **http://localhost:5173**
 ## 📂 Project Structure
 
 ```
-Your app now has:
+Current structure:
 
-OLD (still works):
-- Frontend/ (PHP pages)
-- Backend/ (PHP API)
-- index.php
-
-NEW (React):
-- react-app/ ← Development here!
+- Backend/ (PHP API + database logic)
+- Frontend/ (React app - development here)
+- api.php (API entry used by React)
 ```
 
 ## 🛠️ What You Can Do
 
 ### View Code
-- Components: `react-app/src/pages/` and `react-app/src/components/`
-- Styling: `react-app/src/index.css`
-- API calls: `react-app/src/api/client.js`
+- Components: `Frontend/src/pages/` and `Frontend/src/components/`
+- Styling: `Frontend/src/index.css`
+- API calls: `Frontend/src/api/client.js`
 
 ### Edit Pages
-1. Open file in `react-app/src/pages/`
+1. Open file in `Frontend/src/pages/`
 2. Make changes
 3. Save - browser updates automatically!
 
 ### Add New Page
-1. Create `NewPage.jsx` in `react-app/src/pages/`
+1. Create `NewPage.jsx` in `Frontend/src/pages/`
 2. Add route in `App.jsx`
 3. Done!
 
 ### Change Styling
-1. Edit `react-app/src/index.css`
+1. Edit `Frontend/src/index.css`
 2. Save - updates instantly
 
 ## 🔌 How It Connects
@@ -71,7 +67,7 @@ Database
 
 | Problem | Fix |
 |---------|-----|
-| React app won't start | Make sure you're in `react-app/` folder |
+| React app won't start | Make sure you're in `Frontend/` folder |
 | Can't see products | Check XAMPP is running (Apache) |
 | "Cannot find module" | Run `npm install` |
 | Port 5173 in use | Run `npm run dev -- --port 3000` |
@@ -118,4 +114,4 @@ Creates `dist/` folder with optimized files.
 
 ---
 
-**You're all set!** Start with: `cd react-app && npm run dev`
+**You're all set!** Start with: `cd Frontend && npm run dev`

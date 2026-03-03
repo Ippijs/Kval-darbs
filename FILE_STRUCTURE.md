@@ -12,17 +12,15 @@ KvalDarbs/
 │   ├── verify.sh (verification script)
 │   └── SETUP.html (visual guide)
 │
-├── ⚙️ Original Files (UNCHANGED)
+├── ⚙️ Core Project Files
 │   ├── Backend/
 │   ├── Frontend/
 │   ├── images/
-│   ├── index.php
 │   ├── api.php
 │   ├── main.js
-│   ├── style.css
 │   └── README.md
 │
-└── 🚀 NEW: react-app/ (React Frontend)
+└── 🚀 Frontend/ (React Frontend)
     ├── 📄 Configuration Files
     │   ├── package.json
     │   ├── vite.config.js
@@ -216,7 +214,7 @@ All done with CSS Media Queries (no extra library!)
 🎨 STYLING
 ═══════════════════════════════════════════════════════════════════
 
-File: react-app/src/index.css
+File: Frontend/src/index.css
 
 Contains:
   • CSS Variables (easy color changes)
@@ -236,7 +234,7 @@ All your original styling concepts preserved!
 When ready to go live:
 
 1. Build: npm run build
-   Creates react-app/dist/ with optimized files
+  Creates Frontend/dist/ with optimized files
    
 2. Upload: dist/ folder to your web server
    

@@ -1,28 +1,28 @@
 ╔════════════════════════════════════════════════════════════╗
 ║                                                            ║
-║   ✅ REACT SETUP COMPLETE - YOUR PROJECT IS READY!         ║
+║  ✅ REACT SETUP COMPLETE - YOUR PROJECT IS READY!          ║
 ║                                                            ║
-║   FishingGear Pro: React Frontend + PHP Backend           ║
+║   FishingGear Pro: React Frontend + PHP Backend            ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
 
 📂 WHAT WAS CREATED
 ═══════════════════════════════════════════════════════════════
 
-Your project now has two ways to run:
+Your project uses one app flow:
 
-1️⃣  REACT VERSION (NEW - Recommended)
-   Location: react-app/
-   Run: cd react-app && npm install && npm run dev
+1️⃣  REACT FRONTEND
+   Location: Frontend/
+   Run: cd Frontend && npm install && npm run dev
    Visit: http://localhost:5173
    
-2️⃣  PHP VERSION (ORIGINAL - Still works)
-   Location: Frontend/ files
-   Run: Start XAMPP Apache
-   Visit: http://localhost/KvalDarbs/
+2️⃣  PHP BACKEND API
+   Location: Backend/ + api.php
+   Run: Start XAMPP Apache + MySQL
+   Used by: React app API calls
 
 
-📁 FILES CREATED IN react-app/
+📁 FILES IN Frontend/
 ═══════════════════════════════════════════════════════════════
 
 ✅ Configuration
@@ -80,7 +80,7 @@ Step 1: Have Node.js installed
 
 Step 2: Install dependencies
    Open PowerShell in project folder and run:
-   cd react-app
+   cd Frontend
    npm install
 
 Step 3: Start development
@@ -108,14 +108,14 @@ Your React Frontend (new):
 They communicate via:
    React App → Vite Proxy → PHP Backend → Database
    
-Your existing PHP still works 100% unchanged!
+Your backend PHP logic works unchanged for API/database.
 
 
 🎨 YOUR STYLING
 ═══════════════════════════════════════════════════════════════
 
 All your original CSS has been ported to:
-   react-app/src/index.css
+   Frontend/src/index.css
 
 Same colors, same layout, same responsive design!
 Just in one file instead of being in PHP templates.
@@ -159,16 +159,16 @@ This is a professional, production-ready setup!
 ═══════════════════════════════════════════════════════════════
 
 Q: Do I have to use React now?
-A: No! Your PHP version still works. Use whichever you prefer.
+A: For this project structure, yes for UI. The frontend is React.
 
 Q: Can I switch between them?
-A: Yes! React runs on localhost:5173, PHP on localhost/KvalDarbs/
+A: React runs on localhost:5173 and uses PHP backend API on localhost/KvalDarbs/api.php.
 
 Q: What about my database?
 A: No changes! Both use the same database.
 
 Q: Can I modify the React components?
-A: Yes! Edit files in react-app/src/ and changes appear instantly.
+A: Yes! Edit files in Frontend/src/ and changes appear instantly.
 
 Q: How do I deploy?
 A: Run `npm run build` to create optimized files for production.
@@ -183,7 +183,7 @@ A: Easily! Create new components and pages as needed.
 If something doesn't work:
 
 1. Check XAMPP is running (Apache + MySQL)
-2. Check you're in the react-app/ folder
+2. Check you're in the Frontend/ folder
 3. Check Node.js is installed (node -v)
 4. Check npm install ran successfully
 5. Look at browser console (F12 → Console tab)
@@ -196,7 +196,7 @@ Most issues are simple setup problems - easily fixed!
 ═══════════════════════════════════════════════════════════════
 
 1. ☐ Install Node.js if needed
-2. ☐ Run: cd react-app && npm install
+2. ☐ Run: cd Frontend && npm install
 3. ☐ Run: npm run dev
 4. ☐ Open: http://localhost:5173
 5. ☐ Test that products load

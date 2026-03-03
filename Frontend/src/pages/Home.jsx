@@ -6,15 +6,75 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen })
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState(null)
+  const [selectedFilter, setSelectedFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [alert, setAlert] = useState(null)
 
+  const categoryFilters = {
+    rods: [
+      { id: 'all', label: 'All rods', keywords: [] },
+      { id: 'casting', label: 'Casting', keywords: ['casting', 'spincast'] },
+      { id: 'float', label: 'Fishing float', keywords: ['float'] },
+      { id: 'baitcasting', label: 'Bait casting', keywords: ['baitcasting', 'bait casting'] },
+      { id: 'angling', label: 'Angling', keywords: ['angling'] }
+    ],
+    reels: [
+      { id: 'all', label: 'All reels', keywords: [] },
+      { id: 'spinning', label: 'Spinning', keywords: ['spinning'] },
+      { id: 'baitcasting', label: 'Bait casting', keywords: ['baitcasting', 'bait casting'] }
+    ],
+    line: [
+      { id: 'all', label: 'All line', keywords: [] },
+      { id: 'braided', label: 'Braided', keywords: ['braided'] },
+      { id: 'mono', label: 'Monofilament', keywords: ['mono', 'monofilament'] },
+      { id: 'fluoro', label: 'Fluorocarbon', keywords: ['fluoro', 'fluorocarbon'] }
+    ],
+    lures: [
+      { id: 'all', label: 'All lures', keywords: [] },
+      { id: 'crankbait', label: 'Crankbait', keywords: ['crankbait'] },
+      { id: 'jig', label: 'Jig', keywords: ['jig'] },
+      { id: 'spoon', label: 'Spoon', keywords: ['spoon'] },
+      { id: 'soft', label: 'Soft bait', keywords: ['soft', 'worm'] }
+    ],
+    storage: [
+      { id: 'all', label: 'All storage', keywords: [] },
+      { id: 'box', label: 'Tackle box', keywords: ['box'] },
+      { id: 'backpack', label: 'Backpack', keywords: ['backpack'] }
+    ],
+    hooks: [
+      { id: 'all', label: 'All hooks', keywords: [] },
+      { id: 'single', label: 'Single', keywords: ['single'] },
+      { id: 'treble', label: 'Treble', keywords: ['treble'] }
+    ],
+    weights: [
+      { id: 'all', label: 'All weights', keywords: [] },
+      { id: 'sinker', label: 'Sinker', keywords: ['sinker'] },
+      { id: 'splitshot', label: 'Split shot', keywords: ['split shot', 'splitshot'] }
+    ],
+    nets: [
+      { id: 'all', label: 'All nets', keywords: [] },
+      { id: 'landing', label: 'Landing', keywords: ['landing'] }
+    ],
+    clothing: [
+      { id: 'all', label: 'All clothing', keywords: [] },
+      { id: 'gloves', label: 'Gloves', keywords: ['gloves'] },
+      { id: 'jacket', label: 'Jacket', keywords: ['jacket'] },
+      { id: 'wadingpants', label: 'Wading pants', keywords: ['wading pants', 'waders'] },
+      { id: 'pants', label: 'Pants', keywords: ['pants'] },
+      { id: 'shoes', label: 'Fishing shoes', keywords: ['shoes', 'boots'] }
+    ]
+  }
+
   useEffect(() => {
     loadProducts()
     loadCategories()
   }, [selectedCategory, search, page])
+
+  useEffect(() => {
+    setSelectedFilter('all')
+  }, [selectedCategory])
 
   const loadProducts = async () => {
     try {
@@ -42,6 +102,16 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen })
     setPage(1)
   }
 
+  const activeFilters = selectedCategory ? (categoryFilters[selectedCategory] || [{ id: 'all', label: 'All', keywords: [] }]) : []
+
+  const displayedProducts = products.filter((product) => {
+    if (!selectedCategory || selectedFilter === 'all') return true
+    const filter = (categoryFilters[selectedCategory] || []).find(f => f.id === selectedFilter)
+    if (!filter || filter.keywords.length === 0) return true
+    const haystack = `${product.name || ''} ${product.description || ''}`.toLowerCase()
+    return filter.keywords.some(keyword => haystack.includes(keyword))
+  })
+
   return (
     <div>
       <Alert alert={alert} onClose={() => setAlert(null)} />
@@ -53,6 +123,7 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen })
               <a
                 onClick={() => {
                   setSelectedCategory(null)
+                  setSelectedFilter('all')
                   setMenuOpen(false)
                 }}
                 className={!selectedCategory ? 'active' : ''}
@@ -65,6 +136,7 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen })
                 <a
                   onClick={() => {
                     setSelectedCategory(cat.category)
+                    setSelectedFilter('all')
                     setMenuOpen(false)
                   }}
                   className={selectedCategory === cat.category ? 'active' : ''}
@@ -74,6 +146,24 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen })
               </li>
             ))}
           </ul>
+
+          {selectedCategory && activeFilters.length > 0 && (
+            <div className="subcategory-filters">
+              <div className="filters-title">Filter {selectedCategory}</div>
+              <ul className="filter-list">
+                {activeFilters.map(filter => (
+                  <li key={filter.id}>
+                    <a
+                      onClick={() => setSelectedFilter(filter.id)}
+                      className={selectedFilter === filter.id ? 'active' : ''}
+                    >
+                      {filter.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           
           <div className="sidebar-bottom">
             <a className="sidebar-link" onClick={() => onNavigate('about')}>About us</a>
@@ -91,11 +181,11 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen })
         <main className="products-section">
           {loading ? (
             <p>Loading products...</p>
-          ) : products.length === 0 ? (
+          ) : displayedProducts.length === 0 ? (
             <p>No products found</p>
           ) : (
             <div className="products-grid">
-              {products.map(product => (
+              {displayedProducts.map(product => (
                 <div key={product.id} className="product-card">
                   <div className="product-image">🎣</div>
                   <div className="product-info">

@@ -6,7 +6,7 @@ Your project now has a **modern React frontend** that works with your existing *
 
 ### React App Structure
 ```
-react-app/
+Frontend/
 ├── src/
 │   ├── pages/              # Page components
 │   │   ├── Home.jsx        # Product listing
@@ -39,7 +39,7 @@ Download from: https://nodejs.org/
 
 ### 2. Install Dependencies
 ```bash
-cd react-app
+cd Frontend
 npm install
 ```
 
@@ -75,14 +75,12 @@ That's it! Your React app is now running and connecting to your PHP backend.
 ✅ Error handling & alerts
 ✅ API client with axios
 
-## 🔄 Keeping Both Versions
+## 🔄 Runtime Setup
 
-Your original PHP app still works! You now have:
+- **React Frontend**: `http://localhost:5173` (after `npm run dev`)
+- **PHP Backend API**: `http://localhost/KvalDarbs/api.php` (via XAMPP)
 
-- **React Version**: `http://localhost:5173` (after `npm run dev`)
-- **PHP Version**: `http://localhost/KvalDarbs/` (via XAMPP)
-
-You can develop the React version while keeping the PHP version as backup.
+Run React for UI and keep PHP backend services available for data/auth/orders.
 
 ## 📝 Important Notes
 
@@ -95,7 +93,7 @@ You can develop the React version while keeping the PHP version as backup.
 ## 🛠️ Customization
 
 ### Change API Endpoint
-Edit `react-app/vite.config.js`:
+Edit `Frontend/vite.config.js`:
 ```js
 proxy: {
   '/api': 'http://your-domain.com'
@@ -103,7 +101,7 @@ proxy: {
 ```
 
 ### Update Styling
-Edit `react-app/src/index.css` - all your original CSS is there
+Edit `Frontend/src/index.css` - all your original CSS is there
 
 ### Add More Pages
 Create new files in `src/pages/` and add routes in `App.jsx`
@@ -131,7 +129,7 @@ Create components in `src/components/` and use them in pages
 ## 🎯 Next Steps
 
 1. ✅ Install Node.js if needed
-2. ✅ Run `npm install` in react-app/
+2. ✅ Run `npm install` in Frontend/
 3. ✅ Run `npm run dev`
 4. ✅ Test products load, cart works, login works
 5. ✅ Customize styling/add features as needed

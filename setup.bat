@@ -22,7 +22,7 @@ node --version
 
 echo.
 echo Installing dependencies...
-cd react-app
+cd Frontend
 call npm install
 
 if %ERRORLEVEL% EQU 0 (
@@ -30,7 +30,7 @@ if %ERRORLEVEL% EQU 0 (
     echo ✓ Installation complete!
     echo.
     echo To start the development server, run:
-    echo   cd react-app
+    echo   cd Frontend
     echo   npm run dev
     echo.
     echo Then open: http://localhost:5173

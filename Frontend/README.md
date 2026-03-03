@@ -6,7 +6,7 @@ This is a React application that works with your existing PHP backend.
 
 1. Install dependencies:
 ```bash
-cd react-app
+cd Frontend
 npm install
 ```
 

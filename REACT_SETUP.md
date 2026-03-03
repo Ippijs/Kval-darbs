@@ -7,9 +7,9 @@ Your project now has a **React frontend** alongside your existing PHP backend!
 ### New Structure
 ```
 KvalDarbs/
-├── Backend/           (unchanged - your PHP API)
-├── Frontend/          (unchanged - old PHP pages)
-├── react-app/         (NEW - React frontend)
+├── Backend/           (PHP API + DB logic)
+├── Frontend/          (React frontend)
+├── api.php            (API entry)
 │   ├── src/
 │   │   ├── pages/     (Home, Product, Cart, Login, etc.)
 │   │   ├── components/ (Navbar, Alert, etc.)
@@ -18,8 +18,6 @@ KvalDarbs/
 │   │   └── index.css  (Your styling, ported to CSS)
 │   ├── package.json
 │   └── vite.config.js
-├── index.php          (unchanged)
-├── api.php            (unchanged)
 └── SETUP.html         (new - quick start guide)
 ```
 
@@ -27,17 +25,16 @@ KvalDarbs/
 
 ### Option 1: Use React (Recommended)
 ```bash
-cd react-app
+cd Frontend
 npm install
 npm run dev
 ```
 Then open: **http://localhost:5173**
 
-### Option 2: Keep Using PHP
-Your original setup still works:
+### Backend Requirement
+Keep backend services running for API/database:
 ```bash
-# XAMPP → Start Apache
-# Visit: http://localhost/KvalDarbs/
+# XAMPP → Start Apache + MySQL
 ```
 
 ## Key Points
@@ -48,7 +45,7 @@ Your original setup still works:
 - Database connection is unchanged
 
 ✅ **Your styling is ported to React**
-- All CSS from `style.css` is in `react-app/src/index.css`
+- All CSS is in `Frontend/src/index.css`
 - Same colors, layout, responsive design
 
 ✅ **Cart works client-side**
@@ -70,7 +67,7 @@ Your original setup still works:
 ## Next Steps (Optional)
 
 1. **Test the React app** - Make sure products load, cart works, login works
-2. **Customize styling** - Edit `react-app/src/index.css`
+2. **Customize styling** - Edit `Frontend/src/index.css`
 3. **Add more features** - Create new components in `src/pages/` or `src/components/`
 4. **Deploy** - When ready, run `npm run build` to create optimized `dist/` folder
 
