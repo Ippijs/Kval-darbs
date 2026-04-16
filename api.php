@@ -2,7 +2,24 @@
 // API handler for AJAX and React requests
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: http://localhost:5173');
+// Allow React dev server from localhost and LAN IP when using --host
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+$isAllowedOrigin = false;
+
+if ($origin) {
+    if (preg_match('/^http:\/\/localhost:5173$/', $origin)) {
+        $isAllowedOrigin = true;
+    }
+
+    if (preg_match('/^http:\/\/(?:\d{1,3}\.){3}\d{1,3}:5173$/', $origin)) {
+        $isAllowedOrigin = true;
+    }
+}
+
+if ($isAllowedOrigin) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+}
+
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');

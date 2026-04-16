@@ -1,15 +1,13 @@
-export default function About() {
+export default function About({ t }) {
   return (
     <div style={{padding: '2rem'}}>
-      <h1>About FishingGear Pro</h1>
+      <h1>{t.aboutTitle}</h1>
       <p>
-        Welcome to FishingGear Pro, your ultimate destination for premium fishing equipment. 
-        We are dedicated to providing fishermen and women with the highest quality gear to make 
-        their fishing experience unforgettable.
+        {t.aboutText}
       </p>
-      <h2>Our Mission</h2>
+      <h2>{t.ourMission}</h2>
       <p>
-        To supply quality fishing products at affordable prices and provide excellent customer service.
+        {t.missionText}
       </p>
     </div>
   )

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { authAPI } from '../api/client'
 import Alert from '../components/Alert'
 
-export default function Register({ onNavigate, onRegisterSuccess }) {
+export default function Register({ onNavigate, onRegisterSuccess, t }) {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' })
   const [alert, setAlert] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -32,16 +32,16 @@ export default function Register({ onNavigate, onRegisterSuccess }) {
     const passwordValidation = validatePassword(formData.password)
     if (!passwordValidation.valid) {
       let errors = []
-      if (!passwordValidation.noSpaces) errors.push('Password cannot have leading or trailing spaces')
-      if (!passwordValidation.isLongEnough) errors.push('Password must be at least 8 characters long')
-      if (!passwordValidation.hasUpperCase) errors.push('Password must contain at least 1 uppercase letter')
-      if (!passwordValidation.hasSpecialChar) errors.push('Password must contain at least 1 special character (@, !, #, $, etc.)')
+      if (!passwordValidation.noSpaces) errors.push(t.passwordNoSpaces)
+      if (!passwordValidation.isLongEnough) errors.push(t.atLeast8Characters)
+      if (!passwordValidation.hasUpperCase) errors.push(t.atLeast1Uppercase)
+      if (!passwordValidation.hasSpecialChar) errors.push(t.atLeast1Special)
       setAlert({ type: 'error', message: errors.join('. ') })
       return
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setAlert({ type: 'error', message: 'Passwords do not match' })
+      setAlert({ type: 'error', message: t.passwordMismatch })
       return
     }
 
@@ -49,13 +49,13 @@ export default function Register({ onNavigate, onRegisterSuccess }) {
     try {
       const response = await authAPI.register(formData.username, formData.email, formData.password)
       if (response.data.success) {
-        setAlert({ type: 'success', message: 'Registration successful! Redirecting to login...' })
+        setAlert({ type: 'success', message: t.registrationSuccess })
         setTimeout(() => onNavigate('login'), 2000)
       } else {
         setAlert({ type: 'error', message: response.data.message })
       }
     } catch (error) {
-      setAlert({ type: 'error', message: 'Registration failed' })
+      setAlert({ type: 'error', message: t.registrationFailed })
     } finally {
       setLoading(false)
     }
@@ -65,11 +65,11 @@ export default function Register({ onNavigate, onRegisterSuccess }) {
 
   return (
     <div style={{padding: '2rem', maxWidth: '500px', margin: '2rem auto'}}>
-      <h1>Register</h1>
+      <h1>{t.registerTitle}</h1>
       <Alert alert={alert} />
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Username</label>
+          <label>{t.username}</label>
           <input
             type="text"
             name="username"
@@ -79,7 +79,7 @@ export default function Register({ onNavigate, onRegisterSuccess }) {
           />
         </div>
         <div className="form-group">
-          <label>Email</label>
+          <label>{t.email}</label>
           <input
             type="email"
             name="email"
@@ -89,14 +89,14 @@ export default function Register({ onNavigate, onRegisterSuccess }) {
           />
         </div>
         <div className="form-group">
-          <label>Password</label>
+          <label>{t.password}</label>
           <p style={{fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem'}}>
-            Password must contain:
+            {t.passwordMustContain}
           </p>
           <ul style={{fontSize: '0.85rem', color: '#666', marginLeft: '1.5rem', marginBottom: '0.5rem'}}>
-            <li style={{color: formData.password && passwordValidation.isLongEnough ? '#27ae60' : '#666'}}>At least 8 characters</li>
-            <li style={{color: formData.password && passwordValidation.hasUpperCase ? '#27ae60' : '#666'}}>At least 1 uppercase letter (A-Z)</li>
-            <li style={{color: formData.password && passwordValidation.hasSpecialChar ? '#27ae60' : '#666'}}>At least 1 special character (@, !, #, $, %, etc.)</li>
+            <li style={{color: formData.password && passwordValidation.isLongEnough ? '#27ae60' : '#666'}}>{t.atLeast8Characters}</li>
+            <li style={{color: formData.password && passwordValidation.hasUpperCase ? '#27ae60' : '#666'}}>{t.atLeast1Uppercase}</li>
+            <li style={{color: formData.password && passwordValidation.hasSpecialChar ? '#27ae60' : '#666'}}>{t.atLeast1Special}</li>
           </ul>
           <input
             type="password"
@@ -107,7 +107,7 @@ export default function Register({ onNavigate, onRegisterSuccess }) {
           />
         </div>
         <div className="form-group">
-          <label>Confirm Password</label>
+          <label>{t.confirmPassword}</label>
           <input
             type="password"
             name="confirmPassword"
@@ -117,11 +117,11 @@ export default function Register({ onNavigate, onRegisterSuccess }) {
           />
         </div>
         <button type="submit" className="btn btn-add-cart" disabled={loading}>
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? t.registering : t.register}
         </button>
       </form>
       <p style={{marginTop: '1rem', textAlign: 'center'}}>
-        Already have an account? <a onClick={() => onNavigate('login')} style={{color: 'var(--primary-color)', cursor: 'pointer', fontWeight: 'bold'}}>Login</a>
+        {t.alreadyHaveAccount} <a onClick={() => onNavigate('login')} style={{color: 'var(--primary-color)', cursor: 'pointer', fontWeight: 'bold'}}>{t.login}</a>
       </p>
     </div>
   )

@@ -12,7 +12,7 @@ const defaultForm = {
   image: ''
 }
 
-export default function Admin({ user, onNavigate }) {
+export default function Admin({ user, onNavigate, t }) {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [formData, setFormData] = useState(defaultForm)
@@ -35,7 +35,7 @@ export default function Admin({ user, onNavigate }) {
         setCategories(categoriesRes.data.categories || [])
       }
     } catch (error) {
-      setAlert({ type: 'error', message: 'Failed to load admin data' })
+      setAlert({ type: 'error', message: t.failedLoadAdminData })
     }
   }
 
@@ -46,8 +46,8 @@ export default function Admin({ user, onNavigate }) {
   if (!user || !user.is_admin) {
     return (
       <div className="admin-container">
-        <Alert alert={{ type: 'error', message: 'Admin access required' }} />
-        <button className="btn btn-add-cart" onClick={() => onNavigate('home')}>Back to shop</button>
+        <Alert alert={{ type: 'error', message: t.adminAccessRequired }} />
+        <button className="btn btn-add-cart" onClick={() => onNavigate('home')}>{t.backToShop}</button>
       </div>
     )
   }
@@ -64,7 +64,7 @@ export default function Admin({ user, onNavigate }) {
     const category = formData.newCategory.trim() || formData.category
 
     if (!formData.name.trim() || !category.trim() || !formData.price) {
-      setAlert({ type: 'error', message: 'Name, category, and price are required' })
+      setAlert({ type: 'error', message: t.nameCategoryPriceRequired })
       setLoading(false)
       return
     }
@@ -84,15 +84,15 @@ export default function Admin({ user, onNavigate }) {
         : await adminAPI.createProduct(payload)
 
       if (response.data.success) {
-        setAlert({ type: 'success', message: editingId ? 'Product updated successfully' : 'Product added successfully' })
+        setAlert({ type: 'success', message: editingId ? t.productUpdatedSuccessfully : t.productAddedSuccessfully })
         setFormData(defaultForm)
         setEditingId(null)
         await loadData()
       } else {
-        setAlert({ type: 'error', message: response.data.message || 'Failed to save product' })
+        setAlert({ type: 'error', message: response.data.message || t.failedSaveProduct })
       }
     } catch (error) {
-      setAlert({ type: 'error', message: 'Failed to save product' })
+      setAlert({ type: 'error', message: t.failedSaveProduct })
     } finally {
       setLoading(false)
     }
@@ -113,18 +113,18 @@ export default function Admin({ user, onNavigate }) {
   }
 
   const handleDeleteProduct = async (id) => {
-    if (!window.confirm('Delete this product?')) return
+    if (!window.confirm(t.confirmDeleteProduct)) return
 
     try {
       const response = await adminAPI.deleteProduct(id)
       if (response.data.success) {
-        setAlert({ type: 'success', message: 'Product deleted' })
+        setAlert({ type: 'success', message: t.productDeleted })
         await loadData()
       } else {
-        setAlert({ type: 'error', message: response.data.message || 'Failed to delete product' })
+        setAlert({ type: 'error', message: response.data.message || t.failedDeleteProduct })
       }
     } catch (error) {
-      setAlert({ type: 'error', message: 'Failed to delete product' })
+      setAlert({ type: 'error', message: t.failedDeleteProduct })
     }
   }
 
@@ -132,62 +132,62 @@ export default function Admin({ user, onNavigate }) {
     try {
       const response = await adminAPI.setSoldOut(id)
       if (response.data.success) {
-        setAlert({ type: 'success', message: 'Product marked as sold out' })
+        setAlert({ type: 'success', message: t.productMarkedSoldOut })
         await loadData()
       } else {
-        setAlert({ type: 'error', message: response.data.message || 'Failed to update product' })
+        setAlert({ type: 'error', message: response.data.message || t.failedUpdateProduct })
       }
     } catch (error) {
-      setAlert({ type: 'error', message: 'Failed to update product' })
+      setAlert({ type: 'error', message: t.failedUpdateProduct })
     }
   }
 
   return (
     <div className="admin-container">
-      <h1>Admin Panel</h1>
+      <h1>{t.adminPanel}</h1>
       <Alert alert={alert} onClose={() => setAlert(null)} />
 
       <div className="admin-form">
-        <h2>{editingId ? 'Edit product' : 'Add new product'}</h2>
+        <h2>{editingId ? t.editProduct : t.addNewProduct}</h2>
         <form onSubmit={handleCreateProduct}>
           <div className="form-grid">
             <div className="form-group">
-              <label>Product name</label>
+              <label>{t.productName}</label>
               <input name="name" value={formData.name} onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label>Price (€)</label>
+              <label>{t.price} (€)</label>
               <input name="price" type="number" step="0.01" value={formData.price} onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label>Stock</label>
+              <label>{t.stock}</label>
               <input name="stock" type="number" value={formData.stock} onChange={handleChange} min="0" />
             </div>
             <div className="form-group">
-              <label>Category (existing)</label>
+              <label>{t.categoryExisting}</label>
               <select name="category" value={formData.category} onChange={handleChange}>
-                <option value="">Select category</option>
+                <option value="">{t.selectCategory}</option>
                 {categories.map(cat => (
                   <option key={cat.category} value={cat.category}>{cat.category}</option>
                 ))}
               </select>
             </div>
             <div className="form-group">
-              <label>New category</label>
-              <input name="newCategory" value={formData.newCategory} onChange={handleChange} placeholder="Create new category" />
+              <label>{t.newCategory}</label>
+              <input name="newCategory" value={formData.newCategory} onChange={handleChange} placeholder={t.createNewCategory} />
             </div>
             <div className="form-group">
-              <label>Image (optional)</label>
-              <input name="image" value={formData.image} onChange={handleChange} placeholder="image file name or URL" />
+              <label>{t.imageOptional}</label>
+              <input name="image" value={formData.image} onChange={handleChange} placeholder={t.imagePlaceholder} />
             </div>
             <div className="form-group full-width">
-              <label>Description</label>
+              <label>{t.description}</label>
               <textarea name="description" value={formData.description} onChange={handleChange} rows="3" />
             </div>
           </div>
           <div className="form-buttons">
             <button type="submit" className="btn btn-add-cart" disabled={loading}>
-              {loading ? (editingId ? 'Saving...' : 'Adding...') : (editingId ? 'Save Changes' : 'Add Product')}
+              {loading ? (editingId ? t.saving : t.adding) : (editingId ? t.saveChanges : t.addProduct)}
             </button>
             {editingId && (
               <button
@@ -198,7 +198,7 @@ export default function Admin({ user, onNavigate }) {
                   setFormData(defaultForm)
                 }}
               >
-                Cancel Edit
+                {t.cancelEdit}
               </button>
             )}
           </div>
@@ -206,20 +206,20 @@ export default function Admin({ user, onNavigate }) {
       </div>
 
       <div className="admin-products">
-        <h2>Manage products</h2>
+        <h2>{t.manageProducts}</h2>
         <div className="admin-products-grid">
           {products.map(product => (
             <div key={product.id} className="admin-product-card">
               <div>
                 <strong>{product.name}</strong>
-                <p>Category: {product.category}</p>
-                <p>Price: €{product.price}</p>
-                <p>Status: {product.stock > 0 ? `In stock (${product.stock})` : 'Sold out'}</p>
+                <p>{t.category}: {product.category}</p>
+                <p>{t.price}: €{product.price}</p>
+                <p>{t.status}: {product.stock > 0 ? t.inStockCount(product.stock) : t.soldOut}</p>
               </div>
               <div className="admin-actions">
-                <button className="btn btn-add-cart" onClick={() => handleSoldOut(product.id)}>Mark Sold Out</button>
-                <button className="btn btn-add-cart" onClick={() => handleEditProduct(product)}>Edit</button>
-                <button className="btn btn-danger" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+                <button className="btn btn-add-cart" onClick={() => handleSoldOut(product.id)}>{t.markSoldOut}</button>
+                <button className="btn btn-add-cart" onClick={() => handleEditProduct(product)}>{t.edit}</button>
+                <button className="btn btn-danger" onClick={() => handleDeleteProduct(product.id)}>{t.delete}</button>
               </div>
             </div>
           ))}

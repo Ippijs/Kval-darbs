@@ -1,6 +1,11 @@
 import axios from 'axios'
 
-const API_BASE = 'http://localhost/KvalDarbs'
+const getApiBase = () => {
+  const host = window.location.hostname
+  return `http://${host}/KvalDarbs`
+}
+
+const API_BASE = getApiBase()
 
 const api = axios.create({
   baseURL: API_BASE,

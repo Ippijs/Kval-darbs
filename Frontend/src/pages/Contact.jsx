@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-const API_URL = 'http://localhost/KvalDarbs/api.php'
+const API_URL = `http://${window.location.hostname}/KvalDarbs/api.php`
 
-export default function Contact() {
+export default function Contact({ t }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -40,10 +40,10 @@ export default function Contact() {
         setFormData({ name: '', email: '', message: '' })
         setTimeout(() => setSubmitted(false), 5000)
       } else {
-        setError(data.message || 'Failed to send message')
+        setError(data.message || t.sendFailed)
       }
     } catch (err) {
-      setError('Failed to send message. Please try again.')
+      setError(t.sendFailed)
     } finally {
       setLoading(false)
     }
@@ -52,12 +52,12 @@ export default function Contact() {
   return (
     <div className="contact-page">
       <div className="contact-container">
-        <h1>Contact Us</h1>
-        <p className="contact-subtitle">We'd love to hear from you. Send us a message!</p>
+        <h1>{t.contactUs}</h1>
+        <p className="contact-subtitle">{t.contactSubtitle}</p>
 
         {submitted && (
           <div className="alert alert-success">
-            Thank you for your message. We'll get back to you soon!
+            {t.thankYouMessage}
           </div>
         )}
 
@@ -69,7 +69,7 @@ export default function Contact() {
 
         <form onSubmit={handleSubmit} className="contact-form">
           <div className="form-group">
-            <label>Name</label>
+            <label>{t.name}</label>
             <input
               type="text"
               name="name"
@@ -80,7 +80,7 @@ export default function Contact() {
             />
           </div>
           <div className="form-group">
-            <label>Email</label>
+            <label>{t.email}</label>
             <input
               type="email"
               name="email"
@@ -91,7 +91,7 @@ export default function Contact() {
             />
           </div>
           <div className="form-group">
-            <label>Message</label>
+            <label>{t.message}</label>
             <textarea
               name="message"
               value={formData.message}
@@ -102,7 +102,7 @@ export default function Contact() {
             />
           </div>
           <button type="submit" className="btn btn-add-cart" disabled={loading}>
-            {loading ? 'Sending...' : 'Send Message'}
+            {loading ? t.sending : t.sendMessage}
           </button>
         </form>
       </div>

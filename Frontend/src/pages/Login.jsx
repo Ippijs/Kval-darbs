@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Alert from '../components/Alert'
 
-export default function Login({ onNavigate, onLogin }) {
+export default function Login({ onNavigate, onLogin, t }) {
   const [formData, setFormData] = useState({ username: '', password: '' })
   const [alert, setAlert] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -17,12 +17,12 @@ export default function Login({ onNavigate, onLogin }) {
     try {
       const result = await onLogin(formData.username, formData.password)
       if (result.success) {
-        setAlert({ type: 'success', message: 'Login successful!' })
+        setAlert({ type: 'success', message: t.loginSuccess })
       } else {
-        setAlert({ type: 'error', message: result.message || 'Login failed' })
+        setAlert({ type: 'error', message: result.message || t.loginFailed })
       }
     } catch (error) {
-      setAlert({ type: 'error', message: 'Login failed' })
+      setAlert({ type: 'error', message: t.loginFailed })
     } finally {
       setLoading(false)
     }
@@ -30,11 +30,11 @@ export default function Login({ onNavigate, onLogin }) {
 
   return (
     <div style={{padding: '2rem', maxWidth: '400px', margin: '2rem auto'}}>
-      <h1>Login</h1>
+      <h1>{t.login}</h1>
       <Alert alert={alert} />
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Username</label>
+          <label>{t.username}</label>
           <input
             type="text"
             name="username"
@@ -44,7 +44,7 @@ export default function Login({ onNavigate, onLogin }) {
           />
         </div>
         <div className="form-group">
-          <label>Password</label>
+          <label>{t.password}</label>
           <input
             type="password"
             name="password"
@@ -54,11 +54,11 @@ export default function Login({ onNavigate, onLogin }) {
           />
         </div>
         <button type="submit" className="btn btn-add-cart" disabled={loading}>
-          {loading ? 'Logging in...' : 'Log In'}
+          {loading ? t.loggingIn : t.navLogIn}
         </button>
       </form>
       <p style={{marginTop: '1rem', textAlign: 'center'}}>
-        Don't have an account? <a onClick={() => onNavigate('register')} style={{color: 'var(--primary-color)', cursor: 'pointer', fontWeight: 'bold'}}>Register</a>
+        {t.dontHaveAccount} <a onClick={() => onNavigate('register')} style={{color: 'var(--primary-color)', cursor: 'pointer', fontWeight: 'bold'}}>{t.register}</a>
       </p>
     </div>
   )

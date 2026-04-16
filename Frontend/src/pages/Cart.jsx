@@ -1,14 +1,14 @@
-export default function Cart({ cartItems, onNavigate, onRemoveItem, onClearCart }) {
+export default function Cart({ cartItems, onNavigate, onRemoveItem, onClearCart, t }) {
   const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
   if (cartItems.length === 0) {
     return (
       <div className="cart-container">
         <div className="cart-empty">
-          <h2>Your Cart is Empty</h2>
-          <p>Continue shopping to add items</p>
+          <h2>{t.cartEmptyTitle}</h2>
+          <p>{t.cartEmptyText}</p>
           <button className="btn btn-primary" onClick={() => onNavigate('home')}>
-            Continue Shopping
+            {t.continueShopping}
           </button>
         </div>
       </div>
@@ -17,16 +17,16 @@ export default function Cart({ cartItems, onNavigate, onRemoveItem, onClearCart 
 
   return (
     <div className="cart-container">
-      <h1>Shopping Cart</h1>
+      <h1>{t.shoppingCart}</h1>
 
       <table className="cart-table">
         <thead>
           <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th>Action</th>
+            <th>{t.product}</th>
+            <th>{t.price}</th>
+            <th>{t.quantity}</th>
+            <th>{t.total}</th>
+            <th>{t.action}</th>
           </tr>
         </thead>
         <tbody>
@@ -41,7 +41,7 @@ export default function Cart({ cartItems, onNavigate, onRemoveItem, onClearCart 
                   className="btn btn-danger"
                   onClick={() => onRemoveItem(item.id)}
                 >
-                  Remove
+                  {t.remove}
                 </button>
               </td>
             </tr>
@@ -51,26 +51,30 @@ export default function Cart({ cartItems, onNavigate, onRemoveItem, onClearCart 
 
       <div className="cart-summary">
         <div className="summary-row">
-          <span>Subtotal:</span>
+          <span>{t.subtotal}:</span>
           <span>${total.toFixed(2)}</span>
         </div>
         <div className="summary-row">
-          <span>Shipping:</span>
-          <span>Free</span>
+          <span>{t.shipping}:</span>
+          <span>{t.free}</span>
         </div>
         <div className="summary-row total">
-          <span>Total:</span>
+          <span>{t.total}:</span>
           <span>${total.toFixed(2)}</span>
         </div>
-        <button className="btn btn-primary" style={{width: '100%', marginTop: '1rem'}}>
-          Proceed to Checkout
+        <button
+          className="btn btn-primary"
+          style={{width: '100%', marginTop: '1rem'}}
+          onClick={() => onNavigate('checkout')}
+        >
+          {t.proceedToCheckout}
         </button>
         <button
           className="btn btn-secondary"
           style={{width: '100%', marginTop: '0.5rem'}}
           onClick={() => onNavigate('home')}
         >
-          Continue Shopping
+          {t.continueShopping}
         </button>
       </div>
     </div>
