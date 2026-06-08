@@ -9,6 +9,14 @@ export default function About({ t }) {
       <p>
         {t.missionText}
       </p>
+      <a
+        href="/documents/FishingGear_Pro_Kvalifikacijas_Darba_Dokumentacija.docx"
+        download
+        className="btn-login"
+        style={{display: 'inline-block', marginTop: '1rem', textDecoration: 'none'}}
+      >
+        {t.downloadWordDocument}
+      </a>
     </div>
   )
 }
