@@ -1,6 +1,11 @@
 import axios from 'axios'
 
 const getApiBase = () => {
+  const envBase = import.meta.env.VITE_API_BASE_URL
+  if (envBase) {
+    return envBase
+  }
+
   const host = window.location.hostname
   return `http://${host}/KvalDarbs`
 }
@@ -9,7 +14,8 @@ const API_BASE = getApiBase()
 
 const api = axios.create({
   baseURL: API_BASE,
-  withCredentials: true
+  withCredentials: true,
+  timeout: 10000
 })
 
 export const productAPI = {
@@ -84,6 +90,14 @@ export const authAPI = {
     api.get('api.php', {
       params: { action: 'getCurrentUser' }
     }),
+
+  updateProfile: (username, email, password = '') =>
+    api.post('api.php', {
+      action: 'updateProfile',
+      username,
+      email,
+      password
+    }),
   
   logout: () =>
     api.post('api.php', {
@@ -109,6 +123,13 @@ export const adminAPI = {
     api.get('api.php', {
       params: { action: 'getAllProductsAdmin' }
     }),
+
+  uploadProductImage: (file) => {
+    const formData = new FormData()
+    formData.append('image', file)
+
+    return api.post('api.php?action=uploadProductImage', formData)
+  },
 
   createProduct: (productData) =>
     api.post('api.php', {

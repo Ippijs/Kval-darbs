@@ -10,7 +10,14 @@ export default function Navbar({ user, cartCount, onLogout, onNavigate, t }) {
         <div className="nav-auth-buttons">
           {user ? (
             <>
-              <span style={{marginRight: '1rem'}}>{user.username}</span>
+              <button
+                className="account-link"
+                type="button"
+                onClick={() => onNavigate('profile')}
+                title={t.navProfile}
+              >
+                {user.username}
+              </button>
               {user.is_admin && (
                     <button className="btn-signup" onClick={() => onNavigate('admin')}>{t.navAdmin}</button>
               )}

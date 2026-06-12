@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/../config.php';
 
 function send_contact_message($name, $email, $subject, $message) {
     global $conn;
@@ -22,4 +22,3 @@ function get_all_contact_messages() {
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 ?>
-

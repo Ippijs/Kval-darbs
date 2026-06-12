@@ -53,7 +53,7 @@ Keep backend services running for API/database:
 - No server-side changes needed
 
 ✅ **Authentication flows through PHP**
-- Login/Register calls your `Backend/auth.php`
+- Login/Register calls your `Backend/auth/auth.php`
 - Session management uses your existing system
 
 ## Features Included

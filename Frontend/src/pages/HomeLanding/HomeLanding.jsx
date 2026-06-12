@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import Alert from '../components/Alert'
+import Alert from '../../components/Alert'
 
-export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenuOpen, weatherConsent, language, t }) {
+export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenuOpen, weatherConsent, t }) {
   const [weather, setWeather] = useState(null)
   const [fishingConditions, setFishingConditions] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -134,42 +134,42 @@ export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenu
     }
 
     // Determine quality and fish list
-    if (score >= 9) {
+        if (score >= 9) {
       quality = 'Excellent'
       condition = 'Perfect'
       fish = [
-        { name: 'Līdaka (Pike)', method: 'Spinning, jerkbaits, spoons', methodLv: 'Spiningošana, džerki, šūpiņi', location: 'Shallow waters, weed beds', locationLv: 'Sekli ūdeņi, zāļu joslas', icon: '🐟' },
-        { name: 'Asaris (Perch)', method: 'Drop shot, jigs, live bait', methodLv: 'Dropshots, džigi, dzīva ēsma', location: 'Rocky areas, near structures', locationLv: 'Akmeņainas vietas, pie struktūrām', icon: '🐠' },
-        { name: 'Forele (Trout)', method: 'Fly fishing, spinners, worms', methodLv: 'Mušiņmakšķerēšana, rotiņi, tārpi', location: 'Flowing rivers, cold streams', locationLv: 'Tekošas upes, aukstas straumes', icon: '🎣' },
-        { name: 'Karpa (Carp)', method: 'Boilies, corn, method feeder', methodLv: 'Boilas, kukurūza, method feederis', location: 'Lakes, slow rivers', locationLv: 'Ezeri, lēnas upes', icon: '🐟' }
+        { name: 'Pike', method: 'Spinning, jerkbaits, spoons', location: 'Shallow waters, weed beds', icon: '🐟' },
+        { name: 'Perch', method: 'Drop shot, jigs, live bait', location: 'Rocky areas, near structures', icon: '🐠' },
+        { name: 'Trout', method: 'Fly fishing, spinners, worms', location: 'Flowing rivers, cold streams', icon: '🎣' },
+        { name: 'Carp', method: 'Boilies, corn, method feeder', location: 'Lakes, slow rivers', icon: '🐟' }
       ]
     } else if (score >= 7) {
       quality = 'Good'
       condition = 'Very Good'
       fish = [
-        { name: 'Asaris (Perch)', method: 'Jigs, worms, small lures', methodLv: 'Džigi, tārpi, mazas ēsmas', location: 'Near bottom, structures', locationLv: 'Pie grunts, pie struktūrām', icon: '🐠' },
-        { name: 'Karpa (Carp)', method: 'Corn, pellets, hair rigs', methodLv: 'Kukurūza, granulas, matiņu sistēma', location: 'Warm shallow waters', locationLv: 'Silti seklumi', icon: '🐟' },
-        { name: 'Breksis (Bream)', method: 'Bottom fishing, feeder, maggots', methodLv: 'Gruntsmakšķere, feederis, kāpuri', location: 'Deep pools, slow waters', locationLv: 'Dziļas bedres, lēni ūdeņi', icon: '🐟' },
-        { name: 'Rauda (Roach)', method: 'Float fishing, bread, maggots', methodLv: 'Pludiņmakšķere, maize, kāpuri', location: 'Mid-water, near reeds', locationLv: 'Vidējie slāņi, pie niedrēm', icon: '🐠' },
-        { name: 'Zandarts (Zander)', method: 'Jigs, live fish, trolling', methodLv: 'Džigi, dzīva zivtiņa, velcēšana', location: 'Deep water, twilight hours', locationLv: 'Dziļi ūdeņi, krēsla', icon: '🎣' }
+        { name: 'Perch', method: 'Jigs, worms, small lures', location: 'Near bottom, structures', icon: '🐠' },
+        { name: 'Carp', method: 'Corn, pellets, hair rigs', location: 'Warm shallow waters', icon: '🐟' },
+        { name: 'Bream', method: 'Bottom fishing, feeder, maggots', location: 'Deep pools, slow waters', icon: '🐟' },
+        { name: 'Roach', method: 'Float fishing, bread, maggots', location: 'Mid-water, near reeds', icon: '🐠' },
+        { name: 'Zander', method: 'Jigs, live fish, trolling', location: 'Deep water, twilight hours', icon: '🎣' }
       ]
     } else if (score >= 5) {
       quality = 'Moderate'
       condition = 'Fair'
       fish = [
-        { name: 'Breksis (Bream)', method: 'Feeder fishing, groundbait', methodLv: 'Feederis, iebarošana', location: 'Deep holes, muddy bottom', locationLv: 'Dziļas bedres, dūņaina grunts', icon: '🐟' },
-        { name: 'Rauda (Roach)', method: 'Float, small hooks, bread', methodLv: 'Pludiņš, mazi āķi, maize', location: 'Shallow waters, canals', locationLv: 'Sekli ūdeņi, kanāli', icon: '🐠' },
-        { name: 'Līnis (Tench)', method: 'Float, worms, corn', methodLv: 'Pludiņš, tārpi, kukurūza', location: 'Weedy areas, muddy bottom', locationLv: 'Zāļainas vietas, dūņaina grunts', icon: '🐟' },
-        { name: 'Plaudis (White Bream)', method: 'Bottom fishing, maggots', methodLv: 'Gruntsmakšķere, kāpuri', location: 'Slow rivers, lakes', locationLv: 'Lēnas upes, ezeri', icon: '🐠' },
-        { name: 'Karūsa (Crucian)', method: 'Float, small hooks, worms', methodLv: 'Pludiņš, mazi āķi, tārpi', location: 'Ponds, shallow lakes', locationLv: 'Dīķi, sekli ezeri', icon: '🐟' }
+        { name: 'Bream', method: 'Feeder fishing, groundbait', location: 'Deep holes, muddy bottom', icon: '🐟' },
+        { name: 'Roach', method: 'Float, small hooks, bread', location: 'Shallow waters, canals', icon: '🐠' },
+        { name: 'Tench', method: 'Float, worms, corn', location: 'Weedy areas, muddy bottom', icon: '🐟' },
+        { name: 'White Bream', method: 'Bottom fishing, maggots', location: 'Slow rivers, lakes', icon: '🐠' },
+        { name: 'Crucian', method: 'Float, small hooks, worms', location: 'Ponds, shallow lakes', icon: '🐟' }
       ]
     } else {
       quality = 'Poor'
       condition = 'Challenging'
       fish = [
-        { name: 'Sams (Wels Catfish)', method: 'Bottom fishing, large bait, live fish', methodLv: 'Gruntsmakšķere, liela ēsma, dzīva zivtiņa', location: 'Deep waters, night fishing', locationLv: 'Dziļi ūdeņi, nakts makšķerēšana', icon: '🐟' },
-        { name: 'Zandarts (Zander)', method: 'Deep jigs, live bait, night', methodLv: 'Dziļie džigi, dzīva ēsma, nakts', location: 'Deep channels, structures', locationLv: 'Dziļi kanāli, pie struktūrām', icon: '🎣' },
-        { name: 'Līdaka (Pike)', method: 'Large lures, dead bait', methodLv: 'Lielas ēsmas, beigta ēsma', location: 'Deep waters, cold spots', locationLv: 'Dziļi ūdeņi, aukstie punkti', icon: '🐟' }
+        { name: 'Wels Catfish', method: 'Bottom fishing, large bait, live fish', location: 'Deep waters, night fishing', icon: '🐟' },
+        { name: 'Zander', method: 'Deep jigs, live bait, night', location: 'Deep channels, structures', icon: '🎣' },
+        { name: 'Pike', method: 'Large lures, dead bait', location: 'Deep waters, cold spots', icon: '🐟' }
       ]
     }
 
@@ -246,8 +246,8 @@ export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenu
                       <strong>{f.name}</strong>
                     </div>
                     <div className="fish-info">
-                      <p><strong>{t.method}:</strong> {language === 'lv' ? (f.methodLv || f.method) : f.method}</p>
-                      <p><strong>{t.location}:</strong> {language === 'lv' ? (f.locationLv || f.location) : f.location}</p>
+                      <p><strong>{t.method}:</strong> {f.method}</p>
+                      <p><strong>{t.location}:</strong> {f.location}</p>
                     </div>
                   </div>
                 ))}
@@ -267,7 +267,7 @@ export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenu
       )}
 
       <div className="cta-section">
-        <h2>{t.readyToGoFishing}</h2>
+        <h2>{t.readyToGoFishing? t.readyToGoFishing : 'Ready to Go Fishing?'}</h2>
         <p>{t.checkOutGear}</p>
         <button className="btn btn-add-cart" onClick={() => onNavigate('home', { showShop: true })}>
           {t.shopAllProducts}

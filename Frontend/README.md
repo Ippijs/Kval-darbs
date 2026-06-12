@@ -17,6 +17,22 @@ npm run dev
 
 The app will run on `http://localhost:5173` and connect to your PHP backend on `http://localhost/KvalDarbs/`
 
+## Contact Form via EmailJS
+
+The Contact Us page uses EmailJS to send messages from the frontend.
+
+1. Copy `.env.example` to `.env` in `Frontend/`
+2. Fill in your EmailJS values:
+	- `VITE_EMAILJS_SERVICE_ID`
+	- `VITE_EMAILJS_TEMPLATE_ID`
+	- `VITE_EMAILJS_PUBLIC_KEY`
+3. Restart the dev server after updating `.env`
+
+Example:
+```bash
+cp .env.example .env
+```
+
 ## Building for Production
 
 ```bash

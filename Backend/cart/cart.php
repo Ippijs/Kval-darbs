@@ -1,6 +1,6 @@
 <?php
-require_once 'config.php';
-require_once 'auth.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../auth/auth.php';
 
 function add_to_cart($user_id, $product_id, $quantity = 1) {
     global $conn;
@@ -41,12 +41,7 @@ function add_to_cart($user_id, $product_id, $quantity = 1) {
 function get_cart_items($user_id) {
     global $conn;
     
-    $stmt = $conn->prepare("
-        SELECT c.id, c.quantity, p.id as product_id, p.name, p.price, p.image 
-        FROM cart c 
-        JOIN products p ON c.product_id = p.id 
-        WHERE c.user_id = ?
-    ");
+    $stmt = $conn->prepare("\n        SELECT c.id, c.quantity, p.id as product_id, p.name, p.price, p.image \n        FROM cart c \n        JOIN products p ON c.product_id = p.id \n        WHERE c.user_id = ?\n    ");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     

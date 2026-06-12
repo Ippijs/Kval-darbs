@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { productAPI } from '../api/client'
-import Alert from '../components/Alert'
-import { translateProductDescription } from '../utils/productDescriptionTranslate'
+import { productAPI } from '../../api/client'
+import Alert from '../../components/Alert'
+import { translateProductDescription } from '../../utils/productDescriptionTranslate'
 
-export default function Product({ productId, onNavigate, onAddToCart, user, language, t }) {
+export default function Product({ productId, onNavigate, onAddToCart, user, t }) {
   const [product, setProduct] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -59,6 +59,17 @@ export default function Product({ productId, onNavigate, onAddToCart, user, lang
     return category.charAt(0).toUpperCase() + category.slice(1)
   }
 
+  const resolveImageUrl = (imagePath) => {
+    const value = String(imagePath || '').trim()
+    if (!value) return null
+
+    if (/^(https?:\/\/|data:|blob:)/i.test(value) || value.startsWith('/')) {
+      return value
+    }
+
+    return `http://${window.location.hostname}/KvalDarbs/${value.replace(/^\/+/, '')}`
+  }
+
   if (loading) return <p>{t.loadingProduct}</p>
   if (!product) return <p>{t.productNotFound}</p>
 
@@ -74,7 +85,11 @@ export default function Product({ productId, onNavigate, onAddToCart, user, lang
 
       <div className="product-detail-container">
         <div className="product-image-large">
-          <div className="image-placeholder-large">🎣</div>
+          {resolveImageUrl(product.image) ? (
+            <img src={resolveImageUrl(product.image)} alt={product.name} className="product-image-large-img" />
+          ) : (
+            <div className="image-placeholder-large">🎣</div>
+          )}
         </div>
 
         <div className="product-details-info">
@@ -82,10 +97,10 @@ export default function Product({ productId, onNavigate, onAddToCart, user, lang
           <p className="category-label">{t.category}: <span>{getCategoryLabel(product.category)}</span></p>
 
           <div className="price-section">
-            <div className="current-price">${product.price}</div>
+            <div className="current-price">€{product.price}</div>
           </div>
 
-          <p className="description">{translateProductDescription(product.description, language) || t.noDescription}</p>
+          <p className="description">{translateProductDescription(product.description) || t.noDescription}</p>
 
           <div className={`product-stock ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
             {product.stock > 0 ? t.inStockCount(product.stock) : t.outOfStock}

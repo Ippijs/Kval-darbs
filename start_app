@@ -1,0 +1,3 @@
+Set-Location "C:\xampp\htdocs\KvalDarbs\Frontend"; if (-not (Test-Path ".\node_modules")) { npm install }; npm run dev
+
+Get-Content .\start_app | Invoke-Expression

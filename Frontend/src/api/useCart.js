@@ -8,7 +8,9 @@ export const useCart = () => {
     // Load cart from localStorage
     const savedCart = localStorage.getItem('cart')
     if (savedCart) {
-      setItems(JSON.parse(savedCart))
+      const parsedItems = JSON.parse(savedCart)
+      setItems(parsedItems)
+      setCount(parsedItems.reduce((sum, item) => sum + item.quantity, 0))
     }
   }, [])
 

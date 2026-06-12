@@ -31,5 +31,9 @@ export const useAuth = () => {
     setUser(null)
   }
 
-  return { user, loading, login, logout }
+  const setCurrentUser = (nextUser) => {
+    setUser(nextUser)
+  }
+
+  return { user, loading, login, logout, setCurrentUser }
 }

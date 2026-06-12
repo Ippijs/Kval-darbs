@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import Alert from '../components/Alert'
-import { adminAPI, productAPI } from '../api/client'
+import Alert from '../../components/Alert'
+import { adminAPI, productAPI } from '../../api/client'
 
 const defaultForm = {
   name: '',
@@ -16,8 +16,10 @@ export default function Admin({ user, onNavigate, t }) {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [formData, setFormData] = useState(defaultForm)
+  const [selectedImageFile, setSelectedImageFile] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [alert, setAlert] = useState(null)
 
   const loadData = async () => {
@@ -57,6 +59,26 @@ export default function Admin({ user, onNavigate, t }) {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  const handleImageFileChange = (e) => {
+    const file = e.target.files?.[0] || null
+
+    if (!file) {
+      setSelectedImageFile(null)
+      return
+    }
+
+    const allowedTypes = ['image/png', 'image/jpeg']
+    if (!allowedTypes.includes(file.type)) {
+      setAlert({ type: 'error', message: t.invalidImageType })
+      e.target.value = ''
+      setSelectedImageFile(null)
+      return
+    }
+
+    setSelectedImageFile(file)
+    setAlert(null)
+  }
+
   const handleCreateProduct = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -70,13 +92,28 @@ export default function Admin({ user, onNavigate, t }) {
     }
 
     try {
+      let imagePath = formData.image.trim()
+
+      if (selectedImageFile) {
+        setUploadingImage(true)
+        const uploadResponse = await adminAPI.uploadProductImage(selectedImageFile)
+        if (!uploadResponse.data.success) {
+          setAlert({ type: 'error', message: uploadResponse.data.message || t.failedUploadImage })
+          setLoading(false)
+          setUploadingImage(false)
+          return
+        }
+
+        imagePath = uploadResponse.data.image || imagePath
+      }
+
       const payload = {
         name: formData.name.trim(),
         category: category.trim(),
         price: parseFloat(formData.price),
         description: formData.description.trim(),
         stock: parseInt(formData.stock || 0, 10),
-        image: formData.image.trim()
+        image: imagePath
       }
 
       const response = editingId
@@ -86,6 +123,7 @@ export default function Admin({ user, onNavigate, t }) {
       if (response.data.success) {
         setAlert({ type: 'success', message: editingId ? t.productUpdatedSuccessfully : t.productAddedSuccessfully })
         setFormData(defaultForm)
+        setSelectedImageFile(null)
         setEditingId(null)
         await loadData()
       } else {
@@ -94,6 +132,7 @@ export default function Admin({ user, onNavigate, t }) {
     } catch (error) {
       setAlert({ type: 'error', message: t.failedSaveProduct })
     } finally {
+      setUploadingImage(false)
       setLoading(false)
     }
   }
@@ -109,6 +148,7 @@ export default function Admin({ user, onNavigate, t }) {
       stock: product.stock ?? 0,
       image: product.image || ''
     })
+    setSelectedImageFile(null)
     window.scrollTo(0, 0)
   }
 
@@ -179,6 +219,16 @@ export default function Admin({ user, onNavigate, t }) {
             <div className="form-group">
               <label>{t.imageOptional}</label>
               <input name="image" value={formData.image} onChange={handleChange} placeholder={t.imagePlaceholder} />
+              <input
+                type="file"
+                accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+                onChange={handleImageFileChange}
+                className="admin-file-input"
+                style={{ marginTop: '0.5rem' }}
+              />
+              {selectedImageFile && (
+                <small>{t.selectedFile}: {selectedImageFile.name}</small>
+              )}
             </div>
             <div className="form-group full-width">
               <label>{t.description}</label>
@@ -187,7 +237,9 @@ export default function Admin({ user, onNavigate, t }) {
           </div>
           <div className="form-buttons">
             <button type="submit" className="btn btn-add-cart" disabled={loading}>
-              {loading ? (editingId ? t.saving : t.adding) : (editingId ? t.saveChanges : t.addProduct)}
+              {(loading || uploadingImage)
+                ? (uploadingImage ? t.uploadingImage : (editingId ? t.saving : t.adding))
+                : (editingId ? t.saveChanges : t.addProduct)}
             </button>
             {editingId && (
               <button
@@ -196,6 +248,7 @@ export default function Admin({ user, onNavigate, t }) {
                 onClick={() => {
                   setEditingId(null)
                   setFormData(defaultForm)
+                  setSelectedImageFile(null)
                 }}
               >
                 {t.cancelEdit}
@@ -205,25 +258,20 @@ export default function Admin({ user, onNavigate, t }) {
         </form>
       </div>
 
-      <div className="admin-products">
-        <h2>{t.manageProducts}</h2>
-        <div className="admin-products-grid">
-          {products.map(product => (
-            <div key={product.id} className="admin-product-card">
-              <div>
-                <strong>{product.name}</strong>
-                <p>{t.category}: {product.category}</p>
-                <p>{t.price}: €{product.price}</p>
-                <p>{t.status}: {product.stock > 0 ? t.inStockCount(product.stock) : t.soldOut}</p>
-              </div>
-              <div className="admin-actions">
-                <button className="btn btn-add-cart" onClick={() => handleSoldOut(product.id)}>{t.markSoldOut}</button>
-                <button className="btn btn-add-cart" onClick={() => handleEditProduct(product)}>{t.edit}</button>
-                <button className="btn btn-danger" onClick={() => handleDeleteProduct(product.id)}>{t.delete}</button>
-              </div>
+      <div className="admin-products-list">
+        {products.map((product) => (
+          <div key={product.id} className="admin-product-card">
+            <div>
+              <strong>{product.name}</strong>
+              <p>{product.category}</p>
             </div>
-          ))}
-        </div>
+            <div className="admin-product-actions">
+              <button className="btn btn-secondary" onClick={() => handleEditProduct(product)}>{t.edit}</button>
+              <button className="btn btn-secondary" onClick={() => handleSoldOut(product.id)}>{t.markSoldOut}</button>
+              <button className="btn btn-danger" onClick={() => handleDeleteProduct(product.id)}>{t.delete}</button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

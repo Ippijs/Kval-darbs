@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/../config.php';
 
 function get_all_products($category = null, $search = null, $limit = 12, $offset = 0) {
     global $conn;

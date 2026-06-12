@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { productAPI } from '../api/client'
-import Alert from '../components/Alert'
-import { translateProductDescription } from '../utils/productDescriptionTranslate'
+import { productAPI } from '../../api/client'
+import Alert from '../../components/Alert'
+import { translateProductDescription } from '../../utils/productDescriptionTranslate'
 
-export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, language, setLanguage, t, initialCategory }) {
+export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, t, initialCategory }) {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -146,6 +146,17 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, l
     return category.charAt(0).toUpperCase() + category.slice(1)
   }
 
+  const resolveImageUrl = (imagePath) => {
+    const value = String(imagePath || '').trim()
+    if (!value) return null
+
+    if (/^(https?:\/\/|data:|blob:)/i.test(value) || value.startsWith('/')) {
+      return value
+    }
+
+    return `http://${window.location.hostname}/KvalDarbs/${value.replace(/^\/+/, '')}`
+  }
+
   return (
     <div>
       <Alert alert={alert} onClose={() => setAlert(null)} />
@@ -165,8 +176,8 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, l
                 {t.allProducts}
               </a>
             </li>
-            {categories.map(cat => (
-              <li key={cat.id}>
+            {categories.map((cat, index) => (
+              <li key={cat.category || `category-${index}`}>
                 <a
                   onClick={() => {
                     setSelectedCategory(cat.category)
@@ -198,29 +209,28 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, l
               </ul>
             </div>
           )}
-          
+
           <div className="sidebar-bottom">
             <a className="sidebar-link" onClick={() => onNavigate('about')}>{t.aboutUs}</a>
             <a className="sidebar-link" onClick={() => onNavigate('contact')}>{t.contacts}</a>
-            <div className="language-selector">
-              <span>{t.language}</span>
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect fill='%23012169' width='60' height='30'/%3E%3Cpath d='M0 0l60 30M60 0L0 30' stroke='%23FFF' stroke-width='6'/%3E%3Cpath d='M0 0l60 30M60 0L0 30' stroke='%23C8102E' stroke-width='4' clip-path='inset(0)' /%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23FFF' stroke-width='10'/%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23C8102E' stroke-width='6'/%3E%3C/svg%3E" 
-                   alt="EN"
-                   className={`language-flag ${language === 'en' ? 'active' : ''}`}
-                   title="English"
-                   onClick={() => setLanguage('en')}
-                 />
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 600'%3E%3Crect fill='%239e3039' width='1200' height='600'/%3E%3Crect fill='%23FFF' y='200' width='1200' height='200'/%3E%3C/svg%3E" 
-                   alt="LV"
-                   className={`language-flag ${language === 'lv' ? 'active' : ''}`}
-                   title="Latviešu"
-                   onClick={() => setLanguage('lv')}
-                 />
-            </div>
+            
           </div>
         </aside>
 
         <main className="products-section">
+          <form className="search-bar products-search-bar" onSubmit={handleSearch}>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value)
+                setPage(1)
+              }}
+              placeholder="Search products"
+              aria-label="Search products"
+            />
+          </form>
+
           {loading ? (
             <p>{t.loadingProducts}</p>
           ) : displayedProducts.length === 0 ? (
@@ -241,24 +251,28 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, l
                     }
                   }}
                 >
-                  <div className="product-image">🎣</div>
+                  <div className="product-image">
+                    {resolveImageUrl(product.image) ? (
+                      <img src={resolveImageUrl(product.image)} alt={product.name} className="product-image-img" loading="lazy" />
+                    ) : (
+                      <span>🎣</span>
+                    )}
+                  </div>
                   <div className="product-info">
-                    <div className="product-name">{product.name}</div>
-                    <div className="product-price">€{product.price}</div>
-                    <div className="product-description">{getShortDescription(translateProductDescription(product.description, language))}</div>
-                    <button
-                      className="btn btn-add-cart"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        if (product.stock > 0) {
+                    <h3>{product.name}</h3>
+                    <p>{getShortDescription(translateProductDescription(product.description))}</p>
+                    <div className="product-footer">
+                      <span className="product-price">€{product.price}</span>
+                      <button
+                        className="btn btn-add-cart"
+                        onClick={(e) => {
+                          e.stopPropagation()
                           onAddToCart(product, 1)
-                          setAlert({ type: 'success', message: `${product.name} ${t.addedToCart}` })
-                        }
-                      }}
-                      disabled={product.stock === 0}
-                    >
-                      {t.addToCart}
-                    </button>
+                        }}
+                      >
+                        {t.addToCart}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

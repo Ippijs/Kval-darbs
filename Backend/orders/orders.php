@@ -1,11 +1,11 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/../config.php';
 
-function create_order($user_id) {
+function create_order($user_id, $shipping_address = '') {
     global $conn;
     
     // Get cart items
-    require_once 'cart.php';
+    require_once __DIR__ . '/../cart/cart.php';
     $cart_items = get_cart_items($user_id);
     
     if (empty($cart_items)) {
@@ -33,7 +33,8 @@ function create_order($user_id) {
         $update_stock = $conn->prepare("UPDATE products SET stock = stock - ? WHERE id = ?");
         
         foreach ($cart_items as $item) {
-            $insert_item->bind_param("iiii", $order_id, $item['product_id'], $item['quantity'], $item['price']);
+            $price = (float)$item['price'];
+            $insert_item->bind_param("iiid", $order_id, $item['product_id'], $item['quantity'], $price);
             $insert_item->execute();
             
             $update_stock->bind_param("ii", $item['quantity'], $item['product_id']);
@@ -73,12 +74,7 @@ function get_order_details($order_id) {
     $order = $stmt->get_result()->fetch_assoc();
     
     if ($order) {
-        $items_stmt = $conn->prepare("
-            SELECT oi.*, p.name, p.image 
-            FROM order_items oi 
-            JOIN products p ON oi.product_id = p.id 
-            WHERE oi.order_id = ?
-        ");
+        $items_stmt = $conn->prepare("\n            SELECT oi.*, p.name, p.image \n            FROM order_items oi \n            JOIN products p ON oi.product_id = p.id \n            WHERE oi.order_id = ?\n        ");
         $items_stmt->bind_param("i", $order_id);
         $items_stmt->execute();
         $order['items'] = $items_stmt->get_result()->fetch_all(MYSQLI_ASSOC);

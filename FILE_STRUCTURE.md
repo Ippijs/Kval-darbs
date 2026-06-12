@@ -187,7 +187,7 @@ User State
 Product Data
   Location: Server (PHP/MySQL)
   Retrieved: When app loads or user filters
-  API: Gets data from Backend/products.php
+  API: Gets data from Backend/products/products.php
 
 
 📱 RESPONSIVE DESIGN

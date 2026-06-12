@@ -27,11 +27,11 @@ Clean setup for React frontend + PHP backend.
 - React calls `http://localhost/KvalDarbs/api.php`
 - Core runtime backend files:
   - `Backend/config.php`
-  - `Backend/auth.php`
-  - `Backend/products.php`
-  - `Backend/cart.php`
-  - `Backend/orders.php`
-  - `Backend/contact.php`
+   - `Backend/auth/auth.php`
+   - `Backend/products/products.php`
+   - `Backend/cart/cart.php`
+   - `Backend/orders/orders.php`
+   - `Backend/contact/contact.php`
 
 ## Important
 

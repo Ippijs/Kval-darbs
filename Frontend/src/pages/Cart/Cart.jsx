@@ -32,11 +32,11 @@ export default function Cart({ cartItems, onNavigate, onRemoveItem, onClearCart,
         <tbody>
           {cartItems.map(item => (
             <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>${item.price}</td>
-              <td>{item.quantity}</td>
-              <td>${(item.price * item.quantity).toFixed(2)}</td>
-              <td>
+              <td data-label={t.product}>{item.name}</td>
+              <td data-label={t.price}>€{item.price}</td>
+              <td data-label={t.quantity}>{item.quantity}</td>
+              <td data-label={t.total}>€{(item.price * item.quantity).toFixed(2)}</td>
+              <td data-label={t.action}>
                 <button
                   className="btn btn-danger"
                   onClick={() => onRemoveItem(item.id)}
@@ -52,7 +52,7 @@ export default function Cart({ cartItems, onNavigate, onRemoveItem, onClearCart,
       <div className="cart-summary">
         <div className="summary-row">
           <span>{t.subtotal}:</span>
-          <span>${total.toFixed(2)}</span>
+          <span>€{total.toFixed(2)}</span>
         </div>
         <div className="summary-row">
           <span>{t.shipping}:</span>
@@ -60,7 +60,7 @@ export default function Cart({ cartItems, onNavigate, onRemoveItem, onClearCart,
         </div>
         <div className="summary-row total">
           <span>{t.total}:</span>
-          <span>${total.toFixed(2)}</span>
+          <span>€{total.toFixed(2)}</span>
         </div>
         <button
           className="btn btn-primary"
