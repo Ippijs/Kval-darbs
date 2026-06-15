@@ -1320,6 +1320,21 @@ html {
     border-radius: 10px;
 }
 
+.admin-product-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.admin-product-actions .btn {
+    width: auto;
+    min-width: 92px;
+    padding: 0.55rem 0.9rem;
+    flex: 0 0 auto;
+}
+
 .admin-actions {
     display: flex;
     gap: 0.75rem;

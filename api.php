@@ -379,20 +379,6 @@ switch($action) {
         }
         break;
 
-    case 'setSoldOut':
-        if (is_admin()) {
-            $id = isset($input['id']) ? (int)$input['id'] : 0;
-            if ($id) {
-                $result = set_product_stock($id, 0);
-                echo json_encode($result);
-            } else {
-                echo json_encode(array('success' => false, 'message' => 'Product ID required'));
-            }
-        } else {
-            echo json_encode(array('success' => false, 'message' => 'Admin access required'));
-        }
-        break;
-
     // Cart endpoints
     case 'getCart':
         if (is_logged_in()) {

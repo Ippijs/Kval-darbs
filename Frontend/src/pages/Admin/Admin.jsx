@@ -168,20 +168,6 @@ export default function Admin({ user, onNavigate, t }) {
     }
   }
 
-  const handleSoldOut = async (id) => {
-    try {
-      const response = await adminAPI.setSoldOut(id)
-      if (response.data.success) {
-        setAlert({ type: 'success', message: t.productMarkedSoldOut })
-        await loadData()
-      } else {
-        setAlert({ type: 'error', message: response.data.message || t.failedUpdateProduct })
-      }
-    } catch (error) {
-      setAlert({ type: 'error', message: t.failedUpdateProduct })
-    }
-  }
-
   return (
     <div className="admin-container">
       <h1>{t.adminPanel}</h1>
@@ -267,7 +253,6 @@ export default function Admin({ user, onNavigate, t }) {
             </div>
             <div className="admin-product-actions">
               <button className="btn btn-secondary" onClick={() => handleEditProduct(product)}>{t.edit}</button>
-              <button className="btn btn-secondary" onClick={() => handleSoldOut(product.id)}>{t.markSoldOut}</button>
               <button className="btn btn-danger" onClick={() => handleDeleteProduct(product.id)}>{t.delete}</button>
             </div>
           </div>

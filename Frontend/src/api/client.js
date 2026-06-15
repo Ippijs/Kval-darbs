@@ -147,12 +147,6 @@ export const adminAPI = {
     api.post('api.php', {
       action: 'deleteProduct',
       id
-    }),
-
-  setSoldOut: (id) =>
-    api.post('api.php', {
-      action: 'setSoldOut',
-      id
     })
 }
 
