@@ -1,3 +1,4 @@
+// Reusable alert banner that accepts either a single alert object or direct props.
 export default function Alert({ alert, type, message, onClose }) {
   const resolvedType = type ?? alert?.type
   const resolvedMessage = message ?? alert?.message

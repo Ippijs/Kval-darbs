@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { productAPI } from '../../api/client'
 import Alert from '../../components/Alert'
 import { translateProductDescription } from '../../utils/productDescriptionTranslate'
+import { getCategoryLabel, resolveImageUrl } from '../../utils/catalog'
 
 export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, t, initialCategory }) {
   const [products, setProducts] = useState([])
@@ -13,6 +14,7 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, t
   const [page, setPage] = useState(1)
   const [alert, setAlert] = useState(null)
 
+  // Category-specific sub-filters shown in the left sidebar.
   const categoryFilters = {
     rods: [
       { id: 'all', labelKey: 'allRods', keywords: [] },
@@ -84,6 +86,7 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, t
     setPage(1)
   }, [initialCategory])
 
+  // Loads products using current filter/search/pagination state.
   const loadProducts = async () => {
     try {
       setLoading(true)
@@ -96,6 +99,7 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, t
     }
   }
 
+  // Loads category values used by the sidebar.
   const loadCategories = async () => {
     try {
       const response = await productAPI.getCategories()
@@ -127,36 +131,6 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, t
     return `${cleaned.slice(0, 90)}...`
   }
 
-  const getCategoryLabel = (category) => {
-    const categoryKeyMap = {
-      rods: 'allRods',
-      reels: 'allReels',
-      line: 'allLine',
-      lures: 'allLures',
-      storage: 'allStorage',
-      hooks: 'allHooks',
-      weights: 'allWeights',
-      nets: 'allNets',
-      clothing: 'allClothing'
-    }
-
-    const key = categoryKeyMap[(category || '').toLowerCase()]
-    if (key && t[key]) return t[key]
-    if (!category) return ''
-    return category.charAt(0).toUpperCase() + category.slice(1)
-  }
-
-  const resolveImageUrl = (imagePath) => {
-    const value = String(imagePath || '').trim()
-    if (!value) return null
-
-    if (/^(https?:\/\/|data:|blob:)/i.test(value) || value.startsWith('/')) {
-      return value
-    }
-
-    return `http://${window.location.hostname}/KvalDarbs/${value.replace(/^\/+/, '')}`
-  }
-
   return (
     <div>
       <Alert alert={alert} onClose={() => setAlert(null)} />
@@ -186,7 +160,7 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, t
                   }}
                   className={selectedCategory === cat.category ? 'active' : ''}
                 >
-                  {getCategoryLabel(cat.category)}
+                  {getCategoryLabel(cat.category, t)}
                 </a>
               </li>
             ))}
@@ -194,7 +168,7 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, t
 
           {selectedCategory && activeFilters.length > 0 && (
             <div className="subcategory-filters">
-              <div className="filters-title">{t.filter} {getCategoryLabel(selectedCategory)}</div>
+              <div className="filters-title">{t.filter} {getCategoryLabel(selectedCategory, t)}</div>
               <ul className="filter-list">
                 {activeFilters.map(filter => (
                   <li key={filter.id}>
@@ -237,45 +211,49 @@ export default function Home({ onNavigate, onAddToCart, menuOpen, setMenuOpen, t
             <p>{t.noProductsFound}</p>
           ) : (
             <div className="products-grid">
-              {displayedProducts.map(product => (
-                <div
-                  key={product.id}
-                  className="product-card"
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => onNavigate('product', { id: product.id })}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      onNavigate('product', { id: product.id })
-                    }
-                  }}
-                >
-                  <div className="product-image">
-                    {resolveImageUrl(product.image) ? (
-                      <img src={resolveImageUrl(product.image)} alt={product.name} className="product-image-img" loading="lazy" />
-                    ) : (
-                      <span>🎣</span>
-                    )}
-                  </div>
-                  <div className="product-info">
-                    <h3>{product.name}</h3>
-                    <p>{getShortDescription(translateProductDescription(product.description))}</p>
-                    <div className="product-footer">
-                      <span className="product-price">€{product.price}</span>
-                      <button
-                        className="btn btn-add-cart"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onAddToCart(product, 1)
-                        }}
-                      >
-                        {t.addToCart}
-                      </button>
+              {displayedProducts.map((product) => {
+                const imageUrl = resolveImageUrl(product.image)
+
+                return (
+                  <div
+                    key={product.id}
+                    className="product-card"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => onNavigate('product', { id: product.id })}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        onNavigate('product', { id: product.id })
+                      }
+                    }}
+                  >
+                    <div className="product-image">
+                      {imageUrl ? (
+                        <img src={imageUrl} alt={product.name} className="product-image-img" loading="lazy" />
+                      ) : (
+                        <span>🎣</span>
+                      )}
+                    </div>
+                    <div className="product-info">
+                      <h3>{product.name}</h3>
+                      <p>{getShortDescription(translateProductDescription(product.description))}</p>
+                      <div className="product-footer">
+                        <span className="product-price">€{product.price}</span>
+                        <button
+                          className="btn btn-add-cart"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onAddToCart(product, 1)
+                          }}
+                        >
+                          {t.addToCart}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </main>

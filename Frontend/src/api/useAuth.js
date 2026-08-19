@@ -5,6 +5,7 @@ export const useAuth = () => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  // Hydrates auth state from the current backend session.
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -26,14 +27,14 @@ export const useAuth = () => {
     return response.data
   }
 
+  // Clears backend session and local auth state.
   const logout = async () => {
     await authAPI.logout()
     setUser(null)
   }
 
-  const setCurrentUser = (nextUser) => {
-    setUser(nextUser)
-  }
+  // Allows pages to sync user updates after profile changes.
+  const setCurrentUser = setUser
 
   return { user, loading, login, logout, setCurrentUser }
 }

@@ -3,15 +3,19 @@ import { authAPI } from '../../api/client'
 import Alert from '../../components/Alert'
 import { isStrongPassword } from '../../utils/validation'
 
+// Registration form with client-side password policy checks.
 export default function Register({ onNavigate, onRegisterSuccess, t }) {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' })
   const [alert, setAlert] = useState(null)
   const [loading, setLoading] = useState(false)
 
+  // Updates registration form fields.
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  // Validates and submits registration request.
   const handleSubmit = async (e) => {
     e.preventDefault()
 

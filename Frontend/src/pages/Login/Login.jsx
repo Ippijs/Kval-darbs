@@ -1,16 +1,20 @@
 import { useRef, useState } from 'react'
 import Alert from '../../components/Alert'
 
+// Login form that authenticates user credentials.
 export default function Login({ onNavigate, onLogin, t }) {
   const [formData, setFormData] = useState({ username: '' })
   const [alert, setAlert] = useState(null)
   const [loading, setLoading] = useState(false)
   const passwordRef = useRef(null)
 
+  // Updates login form fields.
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  // Submits credentials and shows auth feedback.
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)

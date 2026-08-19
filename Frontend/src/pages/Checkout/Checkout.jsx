@@ -17,10 +17,12 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
   const [loading, setLoading] = useState(false)
   const [alert, setAlert] = useState(null)
 
+  // Computes checkout total from local cart state.
   const total = useMemo(() => {
     return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   }, [cartItems])
 
+  // Synchronizes local cart rows to server-side cart before order creation.
   const syncServerCartFromLocal = async () => {
     const existingResponse = await cartAPI.getItems()
     const existingItems = Array.isArray(existingResponse.data?.items) ? existingResponse.data.items : []
@@ -34,35 +36,39 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
     )
   }
 
+  // Serializes shipping form fields into a single backend address string.
+  const buildShippingAddress = () => [
+    `Receipt email: ${shippingDetails.receiptEmail.trim()}`,
+    `Country: ${shippingDetails.country.trim()}`,
+    `Name: ${shippingDetails.firstName.trim()} ${shippingDetails.lastName.trim()}`,
+    `Address: ${shippingDetails.addressLine.trim()}`,
+    `City: ${shippingDetails.city.trim()}`,
+    `Postal code: ${shippingDetails.postalCode.trim()}`,
+    `Phone: ${shippingDetails.phoneNumber.trim()}`
+  ].join(', ')
+
+  // Updates one checkout field while preserving the rest of form state.
+  const updateShippingField = (field, value) => {
+    setShippingDetails((prev) => ({ ...prev, [field]: value }))
+  }
+
+  // Validates checkout input, syncs cart, and creates order.
   const handlePlaceOrder = async () => {
     const checkoutValidation = validateCheckoutDetails(shippingDetails)
     if (!checkoutValidation.valid) {
-      if (checkoutValidation.reason === 'email') {
-        setAlert({ type: 'warning', message: t.invalidEmailMessage || 'Please enter a valid email address.' })
-        return
+      const validationMessages = {
+        email: t.invalidEmailMessage || 'Please enter a valid email address.',
+        phone: t.invalidPhoneMessage || 'Please enter a valid phone number.'
       }
 
-      if (checkoutValidation.reason === 'phone') {
-        setAlert({ type: 'warning', message: t.invalidPhoneMessage || 'Please enter a valid phone number.' })
-        return
-      }
-
-      setAlert({ type: 'warning', message: t.requiredFieldsMessage })
+      setAlert({ type: 'warning', message: validationMessages[checkoutValidation.reason] || t.requiredFieldsMessage })
       return
     }
 
     setLoading(true)
     setAlert(null)
 
-    const serializedShippingAddress = [
-      `Receipt email: ${shippingDetails.receiptEmail.trim()}`,
-      `Country: ${shippingDetails.country.trim()}`,
-      `Name: ${shippingDetails.firstName.trim()} ${shippingDetails.lastName.trim()}`,
-      `Address: ${shippingDetails.addressLine.trim()}`,
-      `City: ${shippingDetails.city.trim()}`,
-      `Postal code: ${shippingDetails.postalCode.trim()}`,
-      `Phone: ${shippingDetails.phoneNumber.trim()}`
-    ].join(', ')
+    const serializedShippingAddress = buildShippingAddress()
 
     try {
       await syncServerCartFromLocal()
@@ -124,7 +130,7 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
               autoComplete="email"
               aria-label={t.receiptEmail}
               value={shippingDetails.receiptEmail}
-              onChange={(e) => setShippingDetails((prev) => ({ ...prev, receiptEmail: e.target.value }))}
+              onChange={(e) => updateShippingField('receiptEmail', e.target.value)}
               disabled={loading}
               required
             />
@@ -137,7 +143,7 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
               autoComplete="country-name"
               aria-label={t.country}
               value={shippingDetails.country}
-              onChange={(e) => setShippingDetails((prev) => ({ ...prev, country: e.target.value }))}
+              onChange={(e) => updateShippingField('country', e.target.value)}
               disabled={loading}
               required
             />
@@ -150,7 +156,7 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
               autoComplete="given-name"
               aria-label={t.firstName}
               value={shippingDetails.firstName}
-              onChange={(e) => setShippingDetails((prev) => ({ ...prev, firstName: e.target.value }))}
+              onChange={(e) => updateShippingField('firstName', e.target.value)}
               disabled={loading}
               required
             />
@@ -163,7 +169,7 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
               autoComplete="family-name"
               aria-label={t.lastName}
               value={shippingDetails.lastName}
-              onChange={(e) => setShippingDetails((prev) => ({ ...prev, lastName: e.target.value }))}
+              onChange={(e) => updateShippingField('lastName', e.target.value)}
               disabled={loading}
               required
             />
@@ -176,7 +182,7 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
               autoComplete="address-line1"
               aria-label={t.addressLine}
               value={shippingDetails.addressLine}
-              onChange={(e) => setShippingDetails((prev) => ({ ...prev, addressLine: e.target.value }))}
+              onChange={(e) => updateShippingField('addressLine', e.target.value)}
               disabled={loading}
               required
             />
@@ -189,7 +195,7 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
               autoComplete="address-level2"
               aria-label={t.city}
               value={shippingDetails.city}
-              onChange={(e) => setShippingDetails((prev) => ({ ...prev, city: e.target.value }))}
+              onChange={(e) => updateShippingField('city', e.target.value)}
               disabled={loading}
               required
             />
@@ -202,7 +208,7 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
               autoComplete="postal-code"
               aria-label={t.postalCode}
               value={shippingDetails.postalCode}
-              onChange={(e) => setShippingDetails((prev) => ({ ...prev, postalCode: e.target.value }))}
+              onChange={(e) => updateShippingField('postalCode', e.target.value)}
               disabled={loading}
               required
             />
@@ -215,7 +221,7 @@ export default function Checkout({ cartItems, user, onNavigate, onClearCart, t }
               autoComplete="tel"
               aria-label={t.phoneNumber}
               value={shippingDetails.phoneNumber}
-              onChange={(e) => setShippingDetails((prev) => ({ ...prev, phoneNumber: e.target.value }))}
+              onChange={(e) => updateShippingField('phoneNumber', e.target.value)}
               disabled={loading}
               required
             />

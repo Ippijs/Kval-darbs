@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Alert from '../../components/Alert'
 
+// Landing page with optional weather-based fishing recommendations.
 export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenuOpen, weatherConsent, t }) {
   const [weather, setWeather] = useState(null)
   const [fishingConditions, setFishingConditions] = useState(null)
@@ -8,6 +9,7 @@ export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenu
   const [alert, setAlert] = useState(null)
   const [location, setLocation] = useState(null)
 
+  // Triggers weather flow only when user grants consent.
   useEffect(() => {
     if (weatherConsent === 'accepted') {
       setLoading(true)
@@ -21,10 +23,12 @@ export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenu
     setLocation(null)
   }, [weatherConsent])
 
+  // Fallback coordinates used when exact location is unavailable.
   const fallbackToDefaultLocation = () => {
     fetchWeather(56.9496, 24.1052)
   }
 
+  // Resolves approximate coordinates from public IP geolocation.
   const fetchWeatherFromIp = async () => {
     try {
       const response = await fetch('https://ipapi.co/json/')
@@ -42,6 +46,7 @@ export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenu
     fallbackToDefaultLocation()
   }
 
+  // Tries browser geolocation first, then falls back to IP lookup.
   const getLocationAndWeather = () => {
     const isLocalhost =
       window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -71,6 +76,7 @@ export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenu
     fetchWeatherFromIp()
   }
 
+  // Fetches weather forecast data for selected coordinates.
   const fetchWeather = async (latitude, longitude) => {
     try {
       // Using Open-Meteo API (free, no key required)
@@ -87,6 +93,7 @@ export default function HomeLanding({ onNavigate, onAddToCart, menuOpen, setMenu
     }
   }
 
+  // Converts weather metrics into fishing quality recommendations.
   const calculateFishingConditions = (weatherData) => {
     const current = weatherData.current
     const temp = current.temperature_2m

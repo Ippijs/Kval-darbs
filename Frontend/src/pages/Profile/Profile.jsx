@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { authAPI } from '../../api/client'
 
+// Profile page for updating account identity and optional password.
 export default function Profile({ user, onNavigate, onUserUpdated, t }) {
   const [formData, setFormData] = useState({
     username: '',
@@ -12,6 +13,7 @@ export default function Profile({ user, onNavigate, onUserUpdated, t }) {
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState('success')
 
+  // Loads editable profile fields from current user state.
   useEffect(() => {
     if (user) {
       setFormData((prev) => ({
@@ -22,6 +24,7 @@ export default function Profile({ user, onNavigate, onUserUpdated, t }) {
     }
   }, [user])
 
+  // Mirrors backend password policy for better UX.
   const validatePassword = (password) => {
     if (!password) {
       return { valid: true }
@@ -41,13 +44,16 @@ export default function Profile({ user, onNavigate, onUserUpdated, t }) {
     }
   }
 
+  // Updates one profile form field.
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }))
   }
 
+  // Saves profile changes and propagates refreshed user state.
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)

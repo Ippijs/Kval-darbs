@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `first_name` VARCHAR(100),
   `last_name` VARCHAR(100),
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 CREATE TABLE IF NOT EXISTS `products` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
@@ -21,36 +21,31 @@ CREATE TABLE IF NOT EXISTS `products` (
   `image` VARCHAR(255),
   `stock` INT DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 CREATE TABLE IF NOT EXISTS `cart` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `product_id` INT NOT NULL,
   `quantity` INT DEFAULT 1,
-  `added_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `added_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS `orders` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `total_price` DECIMAL(10, 2) NOT NULL,
   `status` VARCHAR(20) DEFAULT 'pending',
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS `order_items` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `order_id` INT NOT NULL,
   `product_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-  `price` DECIMAL(10, 2) NOT NULL,
-  FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`product_id`) REFERENCES `products`(`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `price` DECIMAL(10, 2) NOT NULL
+);
 
 INSERT INTO `users` (`username`, `email`, `password`, `first_name`, `last_name`) VALUES
 ('admin', 'admin@gmail.com', '$2y$10$ZYmDhoyxkLK87wqNG22fo.EviF4ilB4TSgtWZajZcRbcS/h4lIIhS', 'Admin', 'User');
@@ -76,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `contact_messages` (
   `subject` VARCHAR(200) NOT NULL,
   `message` TEXT NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 CREATE INDEX idx_user_cart ON `cart`(`user_id`);
 CREATE INDEX idx_product_cart ON `cart`(`product_id`);

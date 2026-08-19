@@ -56,6 +56,7 @@ if (!is_array($input)) {
     $input = array();
 }
 
+// Session-based rate limiter for sensitive endpoints.
 function is_rate_limited($action, $windowSeconds, $maxAttempts) {
     $key = 'rate_limit_' . $action;
     $now = time();
@@ -76,6 +77,7 @@ function is_rate_limited($action, $windowSeconds, $maxAttempts) {
     return false;
 }
 
+// Fetches and decodes JSON from remote services with cURL/stream fallback.
 function fetch_json_from_url($url, $timeoutSeconds = 6) {
     $raw = false;
 
@@ -120,6 +122,7 @@ function fetch_json_from_url($url, $timeoutSeconds = 6) {
 $action = isset($_GET['action']) ? $_GET['action'] : (isset($input['action']) ? $input['action'] : null);
 $response = array('success' => false, 'message' => 'Invalid request');
 
+// API action router.
 switch($action) {
     case 'health':
         echo json_encode(array('success' => true, 'status' => 'ok', 'timestamp' => date('c')));
@@ -414,7 +417,7 @@ switch($action) {
         if (is_logged_in()) {
             $cart_item_id = isset($input['cart_item_id']) ? (int)$input['cart_item_id'] : 0;
             $quantity = isset($input['quantity']) ? (int)$input['quantity'] : 1;
-            $result = update_cart_item($cart_item_id, $quantity);
+            $result = update_cart_quantity($cart_item_id, $quantity);
             echo json_encode($result);
         } else {
             echo json_encode(array('success' => false, 'message' => 'Not logged in'));

@@ -1,3 +1,4 @@
+// Static about page content.
 export default function About({ t }) {
   return (
     <div style={{padding: '2rem'}}>

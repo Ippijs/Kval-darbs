@@ -1,6 +1,14 @@
 <?php
 require_once __DIR__ . '/../config.php';
 
+// Calculates the full cart value used for order totals.
+function calculate_order_total($cart_items) {
+    return array_reduce($cart_items, function ($sum, $item) {
+        return $sum + ((float)$item['price'] * (int)$item['quantity']);
+    }, 0.0);
+}
+
+// Creates an order from user's current cart inside a DB transaction.
 function create_order($user_id, $shipping_address = '') {
     global $conn;
     
@@ -11,12 +19,8 @@ function create_order($user_id, $shipping_address = '') {
     if (empty($cart_items)) {
         return array('success' => false, 'message' => 'Cart is empty');
     }
-    
-    // Calculate total
-    $total = 0;
-    foreach ($cart_items as $item) {
-        $total += $item['price'] * $item['quantity'];
-    }
+
+    $total = calculate_order_total($cart_items);
     
     // Start transaction
     $conn->begin_transaction();
@@ -55,6 +59,7 @@ function create_order($user_id, $shipping_address = '') {
     }
 }
 
+// Returns all orders created by one user.
 function get_user_orders($user_id) {
     global $conn;
     
@@ -65,6 +70,7 @@ function get_user_orders($user_id) {
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
+// Returns one order with its item rows.
 function get_order_details($order_id) {
     global $conn;
     

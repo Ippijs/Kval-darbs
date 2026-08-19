@@ -12,6 +12,7 @@ const defaultForm = {
   image: ''
 }
 
+// Admin catalog page for creating, editing, and deleting products.
 export default function Admin({ user, onNavigate, t }) {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
@@ -22,6 +23,7 @@ export default function Admin({ user, onNavigate, t }) {
   const [uploadingImage, setUploadingImage] = useState(false)
   const [alert, setAlert] = useState(null)
 
+  // Loads products and categories needed for admin forms and list.
   const loadData = async () => {
     try {
       const [productsRes, categoriesRes] = await Promise.all([
@@ -54,11 +56,13 @@ export default function Admin({ user, onNavigate, t }) {
     )
   }
 
+  // Updates product form fields.
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  // Validates selected file before upload.
   const handleImageFileChange = (e) => {
     const file = e.target.files?.[0] || null
 
@@ -79,6 +83,7 @@ export default function Admin({ user, onNavigate, t }) {
     setAlert(null)
   }
 
+  // Creates or updates a product based on editing state.
   const handleCreateProduct = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -137,6 +142,7 @@ export default function Admin({ user, onNavigate, t }) {
     }
   }
 
+  // Loads product values into form for editing.
   const handleEditProduct = (product) => {
     setEditingId(product.id)
     setFormData({
@@ -152,6 +158,7 @@ export default function Admin({ user, onNavigate, t }) {
     window.scrollTo(0, 0)
   }
 
+  // Deletes a product after confirmation.
   const handleDeleteProduct = async (id) => {
     if (!window.confirm(t.confirmDeleteProduct)) return
 

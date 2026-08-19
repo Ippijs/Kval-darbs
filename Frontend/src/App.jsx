@@ -16,8 +16,10 @@ import { useCart } from './api/useCart'
 import './index.css'
 import strings from './strings'
 
+// Client-side routes supported by this SPA.
 const VALID_PAGES = new Set(['home', 'product', 'cart', 'checkout', 'about', 'contact', 'login', 'register', 'admin', 'profile'])
 
+// Parses current URL into app page state and params.
 const getRouteFromUrl = () => {
   const path = (window.location.pathname || '/').replace(/\/+$/, '') || '/'
   const search = new URLSearchParams(window.location.search)
@@ -62,6 +64,7 @@ const getRouteFromUrl = () => {
   return { page: safePage, params }
 }
 
+// Builds a URL path from app page state and params.
 const buildUrlFromRoute = (page, params = {}) => {
   if (page === 'home' && params.showShop) {
     if (params.category) {
@@ -84,6 +87,7 @@ const buildUrlFromRoute = (page, params = {}) => {
 
 const WEATHER_CONSENT_COOKIE = 'weather_consent'
 
+// Reads weather consent from cookies.
 const getWeatherConsent = () => {
   const cookie = document.cookie
     .split('; ')
@@ -92,6 +96,7 @@ const getWeatherConsent = () => {
   return cookie ? decodeURIComponent(cookie.split('=')[1]) : 'unset'
 }
 
+// Stores weather consent in a long-lived cookie.
 const setWeatherConsentCookie = (value) => {
   const expires = new Date()
   expires.setDate(expires.getDate() + 180)
@@ -109,6 +114,7 @@ export default function App() {
   const { items, count, addItem, removeItem, clearCart } = useCart()
   const t = strings
 
+  // Initializes consent state from persisted cookie.
   useEffect(() => {
     const consent = getWeatherConsent()
     if (consent === 'accepted' || consent === 'declined') {
@@ -121,11 +127,13 @@ export default function App() {
 
   // language is always English now
 
+  // Normalizes URL once on initial load.
   useEffect(() => {
     const normalizedUrl = buildUrlFromRoute(currentPage, pageParams)
     window.history.replaceState({ page: currentPage, params: pageParams }, '', normalizedUrl)
   }, [])
 
+  // Syncs app state with browser back/forward navigation.
   useEffect(() => {
     const handlePopState = () => {
       const route = getRouteFromUrl()
@@ -138,6 +146,7 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
 
+  // Central page navigation helper used by components.
   const navigate = (page, params = {}, options = {}) => {
     const { replace = false, skipHistory = false } = options
     setCurrentPage(page)
@@ -177,6 +186,7 @@ export default function App() {
     setWeatherConsent(status)
   }
 
+  // Resolves the active page component by route state.
   const renderPage = () => {
     switch (currentPage) {
       case 'home':

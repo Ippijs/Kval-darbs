@@ -2,6 +2,22 @@
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../auth/auth.php';
 
+// Normalizes the common success/failure response structure.
+function cart_result($success, $successMessage, $errorMessage) {
+    return array(
+        'success' => $success,
+        'message' => $success ? $successMessage : $errorMessage
+    );
+}
+
+// Calculates total item quantity for a list of cart rows.
+function cart_item_count($items) {
+    return array_reduce($items, function ($sum, $item) {
+        return $sum + ((int)$item['quantity']);
+    }, 0);
+}
+
+// Adds an item to the user's cart or increases quantity if it already exists.
 function add_to_cart($user_id, $product_id, $quantity = 1) {
     global $conn;
     
@@ -35,9 +51,10 @@ function add_to_cart($user_id, $product_id, $quantity = 1) {
         $insert->execute();
     }
     
-    return array('success' => true, 'message' => 'Item added to cart');
+    return cart_result(true, 'Item added to cart', 'Failed to add item');
 }
 
+// Returns all cart rows for a user joined with product details.
 function get_cart_items($user_id) {
     global $conn;
     
@@ -48,18 +65,17 @@ function get_cart_items($user_id) {
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
+// Removes a cart row by cart id.
 function remove_from_cart($cart_id) {
     global $conn;
     
     $stmt = $conn->prepare("DELETE FROM cart WHERE id = ?");
     $stmt->bind_param("i", $cart_id);
     
-    if ($stmt->execute()) {
-        return array('success' => true, 'message' => 'Item removed from cart');
-    }
-    return array('success' => false, 'message' => 'Failed to remove item');
+    return cart_result($stmt->execute(), 'Item removed from cart', 'Failed to remove item');
 }
 
+// Updates quantity for one cart row, or removes it if quantity is zero/negative.
 function update_cart_quantity($cart_id, $quantity) {
     global $conn;
     
@@ -70,32 +86,26 @@ function update_cart_quantity($cart_id, $quantity) {
     $stmt = $conn->prepare("UPDATE cart SET quantity = ? WHERE id = ?");
     $stmt->bind_param("ii", $quantity, $cart_id);
     
-    if ($stmt->execute()) {
-        return array('success' => true, 'message' => 'Cart updated');
-    }
-    return array('success' => false, 'message' => 'Failed to update cart');
+    return cart_result($stmt->execute(), 'Cart updated', 'Failed to update cart');
 }
 
+// Returns monetary total for all items in the cart.
 function get_cart_total($user_id) {
     $items = get_cart_items($user_id);
-    $total = 0;
-    
-    foreach ($items as $item) {
-        $total += $item['price'] * $item['quantity'];
-    }
-    
+    $total = array_reduce($items, function ($sum, $item) {
+        return $sum + ((float)$item['price'] * (int)$item['quantity']);
+    }, 0.0);
+
     return round($total, 2);
 }
 
+// Clears the entire cart for a user.
 function clear_cart($user_id) {
     global $conn;
     
     $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
     $stmt->bind_param("i", $user_id);
     
-    if ($stmt->execute()) {
-        return array('success' => true, 'message' => 'Cart cleared');
-    }
-    return array('success' => false, 'message' => 'Failed to clear cart');
+    return cart_result($stmt->execute(), 'Cart cleared', 'Failed to clear cart');
 }
 ?>

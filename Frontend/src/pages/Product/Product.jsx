@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { productAPI } from '../../api/client'
 import Alert from '../../components/Alert'
 import { translateProductDescription } from '../../utils/productDescriptionTranslate'
+import { getCategoryLabel, resolveImageUrl } from '../../utils/catalog'
 
 export default function Product({ productId, onNavigate, onAddToCart, user, t }) {
   const [product, setProduct] = useState(null)
@@ -9,10 +10,12 @@ export default function Product({ productId, onNavigate, onAddToCart, user, t })
   const [loading, setLoading] = useState(true)
   const [alert, setAlert] = useState(null)
 
+  // Loads product details when route product id changes.
   useEffect(() => {
     loadProduct()
   }, [productId])
 
+  // Fetches single product data from the API.
   const loadProduct = async () => {
     try {
       setLoading(true)
@@ -25,6 +28,7 @@ export default function Product({ productId, onNavigate, onAddToCart, user, t })
     }
   }
 
+  // Validates cart constraints before adding an item.
   const handleAddToCart = () => {
     if (!user) {
       setAlert({ type: 'warning', message: t.pleaseLoginToCart })
@@ -40,44 +44,16 @@ export default function Product({ productId, onNavigate, onAddToCart, user, t })
     }
   }
 
-  const getCategoryLabel = (category) => {
-    const categoryKeyMap = {
-      rods: 'allRods',
-      reels: 'allReels',
-      line: 'allLine',
-      lures: 'allLures',
-      storage: 'allStorage',
-      hooks: 'allHooks',
-      weights: 'allWeights',
-      nets: 'allNets',
-      clothing: 'allClothing'
-    }
-
-    const key = categoryKeyMap[(category || '').toLowerCase()]
-    if (key && t[key]) return t[key]
-    if (!category) return ''
-    return category.charAt(0).toUpperCase() + category.slice(1)
-  }
-
-  const resolveImageUrl = (imagePath) => {
-    const value = String(imagePath || '').trim()
-    if (!value) return null
-
-    if (/^(https?:\/\/|data:|blob:)/i.test(value) || value.startsWith('/')) {
-      return value
-    }
-
-    return `http://${window.location.hostname}/KvalDarbs/${value.replace(/^\/+/, '')}`
-  }
-
   if (loading) return <p>{t.loadingProduct}</p>
   if (!product) return <p>{t.productNotFound}</p>
+
+  const imageUrl = resolveImageUrl(product.image)
 
   return (
     <div className="product-detail">
       <div className="breadcrumb">
         <a onClick={() => onNavigate('home', { showShop: true })}>{t.shop}</a> &gt;
-        <a onClick={() => onNavigate('home', { showShop: true, category: product.category })}> {getCategoryLabel(product.category)}</a> &gt;
+        <a onClick={() => onNavigate('home', { showShop: true, category: product.category })}> {getCategoryLabel(product.category, t)}</a> &gt;
         {product.name}
       </div>
 
@@ -85,8 +61,8 @@ export default function Product({ productId, onNavigate, onAddToCart, user, t })
 
       <div className="product-detail-container">
         <div className="product-image-large">
-          {resolveImageUrl(product.image) ? (
-            <img src={resolveImageUrl(product.image)} alt={product.name} className="product-image-large-img" />
+          {imageUrl ? (
+            <img src={imageUrl} alt={product.name} className="product-image-large-img" />
           ) : (
             <div className="image-placeholder-large">🎣</div>
           )}
@@ -94,7 +70,7 @@ export default function Product({ productId, onNavigate, onAddToCart, user, t })
 
         <div className="product-details-info">
           <h1>{product.name}</h1>
-          <p className="category-label">{t.category}: <span>{getCategoryLabel(product.category)}</span></p>
+          <p className="category-label">{t.category}: <span>{getCategoryLabel(product.category, t)}</span></p>
 
           <div className="price-section">
             <div className="current-price">€{product.price}</div>

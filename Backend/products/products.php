@@ -1,92 +1,90 @@
 <?php
 require_once __DIR__ . '/../config.php';
 
-function get_all_products($category = null, $search = null, $limit = 12, $offset = 0) {
-    global $conn;
-    
-    $query = "SELECT * FROM products WHERE 1=1";
-    $params = [];
+// Builds reusable SQL filter clauses for category/search product queries.
+function build_product_filters($category, $search) {
+    $where = "";
+    $params = array();
     $types = "";
-    
+
     if ($category) {
-        $query .= " AND category = ?";
+        $where .= " AND category = ?";
         $params[] = $category;
         $types .= "s";
     }
-    
+
     if ($search) {
-        $query .= " AND (name LIKE ? OR description LIKE ?)";
+        $where .= " AND (name LIKE ? OR description LIKE ?)";
         $search_term = "%$search%";
         $params[] = $search_term;
         $params[] = $search_term;
         $types .= "ss";
     }
-    
+
+    return array($where, $params, $types);
+}
+
+// Returns a paginated product list with optional category/search filters.
+function get_all_products($category = null, $search = null, $limit = 12, $offset = 0) {
+    global $conn;
+
+    list($where, $params, $types) = build_product_filters($category, $search);
+    $query = "SELECT * FROM products WHERE 1=1" . $where;
+
     $query .= " LIMIT ? OFFSET ?";
     $params[] = $limit;
     $params[] = $offset;
     $types .= "ii";
-    
+
     $stmt = $conn->prepare($query);
-    
+
     if ($params) {
         $stmt->bind_param($types, ...$params);
     }
-    
+
     $stmt->execute();
     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
+// Returns one product row by id.
 function get_product_by_id($product_id) {
     global $conn;
-    
+
     $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
-    
+
     return $stmt->get_result()->fetch_assoc();
 }
 
+// Returns product count for pagination using the same filters as listing.
 function get_product_count($category = null, $search = null) {
     global $conn;
-    
-    $query = "SELECT COUNT(*) as count FROM products WHERE 1=1";
-    $params = [];
-    $types = "";
-    
-    if ($category) {
-        $query .= " AND category = ?";
-        $params[] = $category;
-        $types .= "s";
-    }
-    
-    if ($search) {
-        $query .= " AND (name LIKE ? OR description LIKE ?)";
-        $search_term = "%$search%";
-        $params[] = $search_term;
-        $params[] = $search_term;
-        $types .= "ss";
-    }
-    
+
+    list($where, $params, $types) = build_product_filters($category, $search);
+    $query = "SELECT COUNT(*) as count FROM products WHERE 1=1" . $where;
+
     $stmt = $conn->prepare($query);
-    
+
     if ($params) {
         $stmt->bind_param($types, ...$params);
     }
-    
+
     $stmt->execute();
     $result = $stmt->get_result()->fetch_assoc();
-    
+
     return $result['count'];
 }
 
+// Returns all unique product categories.
 function get_categories() {
     global $conn;
-    
+
     $result = $conn->query("SELECT DISTINCT category FROM products ORDER BY category");
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+// Inserts a new product row.
 function add_product($name, $category, $price, $description, $image = '', $stock = 0) {
     global $conn;
 
@@ -100,6 +98,7 @@ function add_product($name, $category, $price, $description, $image = '', $stock
     return array('success' => false, 'message' => 'Failed to add product');
 }
 
+// Updates an existing product row.
 function update_product($id, $name, $category, $price, $description, $image, $stock) {
     global $conn;
 
@@ -113,6 +112,7 @@ function update_product($id, $name, $category, $price, $description, $image, $st
     return array('success' => false, 'message' => 'Failed to update product');
 }
 
+// Deletes a product row.
 function delete_product($id) {
     global $conn;
 
@@ -126,6 +126,7 @@ function delete_product($id) {
     return array('success' => false, 'message' => 'Failed to delete product');
 }
 
+// Sets stock quantity for a product row.
 function set_product_stock($id, $stock) {
     global $conn;
 

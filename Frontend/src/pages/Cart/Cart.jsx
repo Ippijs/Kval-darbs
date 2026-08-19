@@ -1,4 +1,6 @@
+// Displays current cart rows and checkout actions.
 export default function Cart({ cartItems, onNavigate, onRemoveItem, onClearCart, t }) {
+  // Computes cart total for summary rows.
   const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
   if (cartItems.length === 0) {
